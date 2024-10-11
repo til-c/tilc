@@ -4,6 +4,7 @@ members = [
   "compiler/tilc_ast",
   "compiler/tilc_lexer",
   "compiler/tilc_parser",
+  "compiler/tilc_span",
 ]
 default-members = ["compiler/tilc"]
 resolver = "2"
@@ -14,6 +15,7 @@ resolver = "2"
 tilc_ast = { path = "compiler/tilc_ast" }
 tilc_lexer = { path = "compiler/tilc_lexer" }
 tilc_parser = { path = "compiler/tilc_parser" }
+tilc_span = { path = "compiler/tilc_span" }
 
 
 # External crates
