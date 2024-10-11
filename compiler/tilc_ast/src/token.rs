@@ -1,3 +1,6 @@
+use tilc_span::Span;
+
+
 #[derive(Debug, PartialEq)]
 pub struct Literal {
   pub kind: LiteralKind,
@@ -94,4 +97,11 @@ pub enum TokenKind {
 
   /// End of line
   Eof,
+}
+
+
+pub struct Identifier {
+  pub symbol: Box<str>,
+  pub span: Span,
+  pub raw: bool,
 }
