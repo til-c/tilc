@@ -64,7 +64,7 @@ pub enum TokenKind {
   CloseBracket,
   /// @
   At,
-  /// #
+  /// '#'
   Hashtag,
   /// ~
   Tilde,

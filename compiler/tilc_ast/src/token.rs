@@ -88,8 +88,8 @@ pub enum TokenKind {
   RArrow,
   /// <-
   LArrow,
-  /// #
-  Hash,
+  /// '#'
+  Hashtag,
   /// ?
   Question,
   OpenDelim(Delim),
