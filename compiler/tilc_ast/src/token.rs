@@ -105,3 +105,9 @@ pub struct Identifier {
   pub span: Span,
   pub raw: bool,
 }
+
+
+pub struct Token {
+  pub kind: TokenKind,
+  pub span: Span,
+}
