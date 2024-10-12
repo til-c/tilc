@@ -79,7 +79,7 @@ pub enum TokenKind {
   /// ,
   Comma,
   /// :
-  Semi,
+  Colon,
   /// ;
   Semicolon,
   /// ::
