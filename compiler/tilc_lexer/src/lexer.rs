@@ -45,6 +45,10 @@ impl<'a> Lexer<'a> {
     };
   }
 
+  pub fn as_str(&self) -> &'a str {
+    return self.chars.as_str();
+  }
+
 
   fn peek(&self) -> char {
     return match self.chars.clone().next() {
