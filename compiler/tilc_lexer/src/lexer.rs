@@ -173,7 +173,7 @@ impl<'a> Lexer<'a> {
   }
 
 
-  fn char_to_token(&mut self) -> Token {
+  pub fn char_to_token(&mut self) -> Token {
     use TokenKind::*;
 
     let current_char: char = match self.step() {
