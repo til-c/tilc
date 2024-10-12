@@ -50,51 +50,70 @@ pub enum TokenKind {
   Literal(Literal),
   Lifetime,
 
-  /// =
+  /// '='
   Eq,
-  /// ==
+  /// "=="
   EqEq,
-  /// <
+  /// '<'
   Lt,
-  /// <=
+  /// "<="
   Le,
-  /// >
+  /// '>'
   Gt,
-  /// >=
+  /// ">="
   Ge,
-  /// &&
+  /// "&&"
   AndAnd,
-  /// ||
+  /// "||"
   OrOr,
-  /// !
+  /// '!'
   Not,
-  /// ~
-  Tilde,
   BinOp(BinOp),
 
-  /// @
+  /// '@'
   At,
-  /// .
+  /// '.'
   Dot,
-  /// ,
+  /// ','
   Comma,
-  /// :
+  /// ':'
   Colon,
-  /// ;
+  /// ';'
   Semicolon,
-  /// ::
+  /// "::"
   Path,
-  /// ->
+  /// "->"
   RArrow,
-  /// <-
+  /// "<-"
   LArrow,
   /// '#'
   Hashtag,
-  /// ?
+  /// '~'
+  Tilde,
+  /// '?'
   Question,
+  /// '$'
+  Dollar,
+  /// '-'
+  Minus,
+  /// '+'
+  Plus,
+  /// '&'
+  And,
+  /// '|'
+  Or,
+  /// '*'
+  Star,
+  /// '/'
+  Slash,
+  /// '^'
+  Caret,
+  /// '%'
+  Percent,
   OpenDelim(Delim),
   CloseDelim(Delim),
 
+  Unknown,
   /// End of line
   Eof,
 }

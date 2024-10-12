@@ -5,3 +5,6 @@ edition = "2021"
 
 
 [dependencies]
+tilc_ast = { workspace = true }
+tilc_lexer = { workspace = true }
+tilc_span = { workspace = true }

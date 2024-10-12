@@ -42,59 +42,59 @@ pub enum TokenKind {
   Lifetime,
 
   // Single char tokens
-  /// ;
+  /// ';'
   Semicolon,
-  /// :
+  /// ':'
   Colon,
-  /// ,
+  /// ','
   Comma,
-  /// .
+  /// '.'
   Dot,
-  /// (
+  /// '('
   OpenParen,
-  /// )
+  /// ')'
   CloseParen,
-  /// {
+  /// '{'
   OpenBrace,
-  /// }
+  /// '}'
   CloseBrace,
-  /// [
+  /// '['
   OpenBracket,
-  /// ]
+  /// ']'
   CloseBracket,
-  /// @
+  /// '@'
   At,
   /// '#'
   Hashtag,
-  /// ~
+  /// '~'
   Tilde,
-  /// ?
+  /// '?'
   Question,
-  /// $
+  /// '$'
   Dollar,
-  /// =
+  /// '='
   Eq,
-  /// !
+  /// '!'
   Bang,
-  /// <
+  /// '<'
   Lt,
-  /// >
+  /// '>'
   Gt,
-  /// -
+  /// '-'
   Minus,
-  /// +
+  /// '+'
   Plus,
-  /// &
+  /// '&'
   And,
-  /// |
+  /// '|'
   Or,
-  /// *
+  /// '*'
   Star,
-  /// /
+  /// '/'
   Slash,
-  /// ^
+  /// '^'
   Caret,
-  /// %
+  /// '%'
   Percent,
 
   /// Belgisiz belgi, mysaly: '№'
