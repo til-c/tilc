@@ -4,8 +4,8 @@
 // Temporary version of the Token before parsing
 #[derive(Debug, PartialEq)]
 pub struct Token {
-  kind: TokenKind,
-  len: usize,
+  pub kind: TokenKind,
+  pub len: usize,
 }
 impl Token {
   pub fn new(kind: TokenKind, len: usize) -> Self {
