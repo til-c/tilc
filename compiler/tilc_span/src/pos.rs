@@ -1,5 +1,7 @@
 use std::ops::{Add, Sub};
 
+
+#[derive(Clone, Copy)]
 pub struct Pos(pub u32);
 impl Pos {
   pub fn new(offset: u32) -> Self {
