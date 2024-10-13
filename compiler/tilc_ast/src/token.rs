@@ -130,3 +130,8 @@ pub struct Token {
   pub kind: TokenKind,
   pub span: Span,
 }
+impl Token {
+  pub fn new(kind: TokenKind, span: Span) -> Self {
+    return Self { kind, span };
+  }
+}
