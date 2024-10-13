@@ -1,6 +1,19 @@
 use std::ops::{Add, AddAssign, Sub, SubAssign};
 
 
+macro_rules! impl_into_for_pos {
+  ($ident:ident: $($ty:ty),+) => {
+    $(
+      impl Into<$ty> for $ident {
+        fn into(self) -> $ty {
+          return self.0 as $ty;
+        }
+      }
+    )+
+  };
+}
+impl_into_for_pos!(Pos: u8, u16, u32, u64, u128, usize);
+
 #[derive(Clone, Copy)]
 pub struct Pos(pub u32);
 impl Pos {
