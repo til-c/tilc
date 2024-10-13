@@ -126,6 +126,7 @@ pub struct Identifier {
 }
 
 
+#[derive(Debug)]
 pub struct Token {
   pub kind: TokenKind,
   pub span: Span,
