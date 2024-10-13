@@ -5,6 +5,7 @@ members = [
   "compiler/tilc_ast",
   "compiler/tilc_lexer",
   "compiler/tilc_parser",
+  "compiler/tilc_session",
   "compiler/tilc_span",
 ]
 default-members = ["compiler/tilc"]
@@ -17,6 +18,7 @@ tilc_advanced_lexer = { path = "compiler/tilc_advanced_lexer" }
 tilc_ast = { path = "compiler/tilc_ast" }
 tilc_lexer = { path = "compiler/tilc_lexer" }
 tilc_parser = { path = "compiler/tilc_parser" }
+tilc_session = { path = "compiler/tilc_session" }
 tilc_span = { path = "compiler/tilc_span" }
 
 
