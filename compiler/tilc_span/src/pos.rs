@@ -1,18 +1,18 @@
 use std::ops::{Add, AddAssign, Sub, SubAssign};
 
-
-macro_rules! impl_into_for_pos {
-  ($ident:ident: $($ty:ty),+) => {
+// TODO: Export general macros into tilc_macro_rules
+macro_rules! impl_into_for_definition {
+  ($ident:ident, $attr:tt; $($ty:ty),+) => {
     $(
       impl Into<$ty> for $ident {
         fn into(self) -> $ty {
-          return self.0 as $ty;
+          return self.$attr as $ty;
         }
       }
     )+
   };
 }
-impl_into_for_pos!(Pos: u8, u16, u32, u64, u128, usize);
+impl_into_for_definition!(Pos, 0; u8, u16, u32, u64, u128, usize);
 
 #[derive(Clone, Copy)]
 pub struct Pos(pub u32);
