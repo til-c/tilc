@@ -1,8 +1,9 @@
 use tilc_index::uidx;
 
-uidx!(SymbolIdx);
+uidx!(SymbolIdx; Debug, PartialEq);
 
 
+#[derive(Debug, PartialEq)]
 pub struct Symbol(SymbolIdx);
 impl Symbol {
   pub fn new(idx: u32) -> Self {
