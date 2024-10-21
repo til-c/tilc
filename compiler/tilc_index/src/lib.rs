@@ -1,6 +1,7 @@
 #[macro_export]
 macro_rules! uidx {
-  ($name:ident) => {
+  ($name:ident; $($derives:ident),*) => {
+    #[derive($($derives),*)]
     pub struct $name(u32);
 
     impl $name {
