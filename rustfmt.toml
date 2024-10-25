@@ -1,7 +1,9 @@
+edition = "2021"
+
 indent_style = "Block"
 hard_tabs = false
 tab_spaces = 2
-max_width = 100
+max_width = 80
 
 
 reorder_imports = true
