@@ -3,6 +3,7 @@ members = [
   "compiler/tilc",
   "compiler/tilc_advanced_lexer",
   "compiler/tilc_ast",
+  "compiler/tilc_data_structures",
   "compiler/tilc_index",
   "compiler/tilc_lexer",
   "compiler/tilc_parser",
@@ -17,6 +18,7 @@ resolver = "2"
 # Internal packages
 tilc_advanced_lexer = { path = "compiler/tilc_advanced_lexer" }
 tilc_ast = { path = "compiler/tilc_ast" }
+tilc_data_structures = { path = "compiler/tilc_data_structures" }
 tilc_index = { path = "compiler/tilc_index" }
 tilc_lexer = { path = "compiler/tilc_lexer" }
 tilc_parser = { path = "compiler/tilc_parser" }
