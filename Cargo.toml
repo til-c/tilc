@@ -27,3 +27,5 @@ tilc_span = { path = "compiler/tilc_span" }
 
 
 # External crates
+indexmap = { version = "2.6" }
+scoped-tls = { version = "1.0.1" }
