@@ -1,15 +1,28 @@
-#[derive(Debug, PartialEq)]
+use crate::Pos;
+
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Span {
   pub start: u32,
-  pub end: u32,
+  pub len: u16,
+
+  pub ctxt: u16,
 }
 impl Span {
-  pub const EMPTY: Self = Self::new(u32::MAX, u32::MAX);
+  pub const EMPTY: Self = Self {
+    start: u32::MAX,
+    len: 0,
+    ctxt: u16::MAX,
+  };
 
-  pub const fn new(start: u32, end: u32) -> Self {
+  pub fn new(start: Pos, end: Pos, ctxt: u16) -> Self {
     debug_assert!(start <= end);
 
 
-    return Self { start, end };
+    let len: u16 = (start - end).into();
+    return Self {
+      start: start.into(),
+      len,
+      ctxt,
+    };
   }
 }

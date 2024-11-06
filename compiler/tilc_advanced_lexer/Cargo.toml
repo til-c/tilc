@@ -8,3 +8,4 @@ edition = "2021"
 tilc_ast = { workspace = true }
 tilc_lexer = { workspace = true }
 tilc_span = { workspace = true }
+tilc_session = { workspace = true }
