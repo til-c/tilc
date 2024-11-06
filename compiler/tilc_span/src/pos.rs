@@ -14,7 +14,7 @@ macro_rules! impl_into_for_definition {
 }
 impl_into_for_definition!(Pos, 0; u8, u16, u32, u64, u128, usize);
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, PartialOrd)]
 pub struct Pos(pub u32);
 impl Pos {
   pub fn new(offset: u32) -> Self {
