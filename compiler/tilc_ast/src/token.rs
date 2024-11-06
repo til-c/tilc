@@ -1,9 +1,11 @@
-use tilc_span::Span;
+use tilc_span::{Span, Symbol};
 
 
 #[derive(Debug, PartialEq)]
 pub struct Literal {
   pub kind: LiteralKind,
+  pub symbol: Symbol,
+  pub suffix: Option<Symbol>,
 }
 #[derive(Debug, PartialEq)]
 pub enum LiteralKind {
@@ -16,37 +18,37 @@ pub enum LiteralKind {
 }
 #[derive(Debug, PartialEq)]
 pub enum BinOp {
-  /// +
+  /// '+'
   Plus,
-  /// -
+  /// '-'
   Minus,
-  /// *
+  /// '*'
   Star,
-  /// /
+  /// '/'
   Slash,
-  /// %
+  /// '%'
   Percent,
-  /// ^
+  /// '^'
   Caret,
-  /// & (bitwise)
+  /// '&' (bitwise)
   And,
-  /// | (bitwise)
+  /// '|' (bitwise)
   Or,
 }
 #[derive(Debug, PartialEq)]
 pub enum Delim {
-  /// ()
+  /// "()"
   Paren,
-  /// {}
+  /// "{}"
   Brace,
-  /// []
+  /// "[]"
   Bracket,
 }
 
 
 #[derive(Debug, PartialEq)]
 pub enum TokenKind {
-  Identifier,
+  Identifier(Symbol, bool),
   Literal(Literal),
   Lifetime,
 
