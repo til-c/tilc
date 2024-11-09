@@ -15,6 +15,8 @@ pub enum LiteralKind {
   Float,
   Str,
   RawStr, // TODO: Implement for lexer first
+
+  Error(),
 }
 #[derive(Debug, PartialEq)]
 pub enum BinOp {
