@@ -20,24 +20,15 @@ pub use span::*;
 pub use symbol::*;
 
 
-// pub static SESSION_GLOBALS: SessionGlobals = SessionGlobals::new();
 thread_local! {
   static SESSION_GLOBALS: SessionGlobals = SessionGlobals::new();
 }
-// scoped_tls::scoped_thread_local!(static SESSION_GLOBALS: SessionGlobals);
-
-
-// pub fn init_session_globals<R, F>(t: &SessionGlobals, f: F) -> R
-// where
-//   F: FnOnce() -> R, {
-//   debug_assert!(
-//     !SESSION_GLOBALS.is_set(),
-//     "SESSION_GLOBALS must not be overwriten"
-//   );
-//   return SESSION_GLOBALS.set(t, f);
-// }
 pub fn with_session_globals<R, F>(f: F) -> R
 where
   F: FnOnce(&SessionGlobals) -> R, {
   return SESSION_GLOBALS.with(f);
 }
+
+
+/// Struct for handling errors and representing the proof that error has been consumed
+pub struct ErrorGuaranteed(());
