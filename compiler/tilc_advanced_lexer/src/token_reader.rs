@@ -1,4 +1,4 @@
-use tilc_ast::{Literal, LiteralKind, Token, TokenKind};
+use tilc_ast::{Token, TokenKind};
 use tilc_session::ParseSession;
 use tilc_span::{ModuleIdx, Pos, Span, Symbol};
 
@@ -86,14 +86,14 @@ impl<'lex> TokenReader<'lex> {
           tilc_lexer::TokenKind::Slash => Slash,
           tilc_lexer::TokenKind::Caret => Caret,
           tilc_lexer::TokenKind::Percent => Percent,
-          tilc_lexer::TokenKind::Unknown => {
-            todo!();
-          }
+          tilc_lexer::TokenKind::Unknown => todo!(),
 
           tilc_lexer::TokenKind::Eof => Eof,
         }
       };
-      let span: Span = Span::new(start, self.pos, 0);
+
+
+      let span: Span = self.mk_span(start, self.pos);
       return (Token::new(kind, span), with_whitespace);
     }
   }
@@ -112,7 +112,31 @@ impl<'lex> TokenReader<'lex> {
   ) -> (tilc_ast::LiteralKind, Symbol) {
     return match literal_kind {
       tilc_lexer::LiteralKind::Int { base } => {
-        todo!();
+        let kind: tilc_ast::LiteralKind = tilc_ast::LiteralKind::Int;
+        match base {
+          tilc_lexer::Base::Decimal => {}
+
+          _ => unimplemented!(),
+        };
+
+
+        (kind, self.symbol_from_to(start, suffix_pos))
+      }
+      tilc_lexer::LiteralKind::Float { base } => {
+        let kind: tilc_ast::LiteralKind = tilc_ast::LiteralKind::Float;
+        let base: Option<&str> = match base {
+          tilc_lexer::Base::Hexadecimal => Some("hexadecimal"),
+          tilc_lexer::Base::Octal => Some("ocatl"),
+          tilc_lexer::Base::Binary => Some("binary"),
+
+          _ => None,
+        };
+        if let Some(base) = base {
+          panic!("Unsopported base {} for float number", base);
+        };
+
+
+        (kind, self.symbol_from_to(start, suffix_pos))
       }
 
       _ => todo!(),
@@ -126,14 +150,17 @@ impl<'lex> TokenReader<'lex> {
   fn str_from(&self, start: Pos) -> &str {
     return self.str_from_to(start, self.pos);
   }
+  fn symbol_from_to(&self, start: Pos, end: Pos) -> Symbol {
+    return Symbol::intern(self.str_from_to(start, end));
+  }
   fn src_pos(&self, pos: Pos) -> usize {
-    return (self.start_post - pos).into();
+    return (pos - self.start_post).into();
   }
 
 
-  /// Always returns span with root context
+  /// Always returns span with module_idx context
   fn mk_span(&self, start: Pos, end: Pos) -> Span {
-    return Span::new(start, end, 0);
+    return Span::new(start, end, self.module_idx.idx() as u16);
   }
 }
 
@@ -143,11 +170,11 @@ mod test {
   use super::TokenReader;
   use tilc_ast::{Delim, Token, TokenKind};
   use tilc_session::{ParseSession, SymbolRepo};
-  use tilc_span::{ModuleIdx, Pos, Span};
+  use tilc_span::{ModuleIdx, Pos, Span, Symbol};
 
   #[test]
   fn next_token() {
-    let src: &str = "( );";
+    let src: &str = "( );123";
 
     let mut token_reader: TokenReader = TokenReader {
       src,
@@ -163,24 +190,97 @@ mod test {
       module_idx: ModuleIdx::new(0),
     };
 
-    // assert_eq!(
-    //   (
-    //     Token::new(TokenKind::OpenDelim(Delim::Paren), Span::new(0, 1, 0)),
-    //     false
-    //   ),
-    //   token_reader.next_token()
-    // );
-    // assert_eq!(
-    //   (
-    //     Token::new(TokenKind::CloseDelim(Delim::Paren), Span::new(2, 3, 0)),
-    //     true
-    //   ),
-    //   token_reader.next_token()
-    // );
+    assert_eq!(
+      token_reader.next_token(),
+      (
+        Token::new(TokenKind::OpenDelim(Delim::Paren), Span::from_u32(0, 1, 0)),
+        false
+      )
+    );
+    assert_eq!(
+      token_reader.next_token(),
+      (
+        Token::new(
+          TokenKind::CloseDelim(Delim::Paren),
+          Span::from_u32(2, 3, 0)
+        ),
+        true
+      ),
+    );
+    assert_eq!(
+      token_reader.next_token(),
+      (
+        Token::new(TokenKind::Semicolon, Span::from_u32(3, 4, 0)),
+        false
+      ),
+    );
+    assert_eq!(
+      token_reader.next_token(),
+      (
+        Token::new(
+          TokenKind::Literal(tilc_ast::Literal {
+            kind: tilc_ast::LiteralKind::Int,
+            symbol: Symbol::new(0),
+            suffix: None
+          }),
+          Span::from_u32(4, 7, 0)
+        ),
+        false
+      )
+    );
+  }
 
-    // assert_eq!(
-    //   (Token::new(TokenKind::Semicolon, Span::new(3, 4, 0)), false),
-    //   token_reader.next_token()
-    // );
+  #[test]
+  fn literal() {
+    let src: &str = "123;123";
+    let mut token_reader: TokenReader = TokenReader {
+      src,
+      lexer: tilc_lexer::Lexer::new(src),
+      parse_session: ParseSession {
+        edition: tilc_span::Edition::default(),
+        symbol_repo: SymbolRepo::new(),
+      },
+
+      start_post: Pos::new(0),
+      pos: Pos::new(0),
+
+      module_idx: ModuleIdx::new(0),
+    };
+
+    assert_eq!(
+      token_reader.next_token(),
+      (
+        Token::new(
+          TokenKind::Literal(tilc_ast::Literal {
+            kind: tilc_ast::LiteralKind::Int,
+            symbol: Symbol::new(0),
+            suffix: None
+          }),
+          Span::from_u32(0, 3, 0)
+        ),
+        false
+      )
+    );
+    assert_eq!(
+      token_reader.next_token(),
+      (
+        Token::new(TokenKind::Semicolon, Span::from_u32(3, 4, 0)),
+        false
+      )
+    );
+    assert_eq!(
+      token_reader.next_token(),
+      (
+        Token::new(
+          TokenKind::Literal(tilc_ast::Literal {
+            kind: tilc_ast::LiteralKind::Int,
+            symbol: Symbol::new(0),
+            suffix: None
+          }),
+          Span::from_u32(4, 7, 0)
+        ),
+        false
+      )
+    );
   }
 }
