@@ -118,7 +118,7 @@ pub enum Base {
   Decimal,
 
   /// Munyń prefıksi: "0o"
-  Hexidecimal,
+  Hexadecimal,
 }
 #[derive(Debug, PartialEq)]
 pub enum LiteralKind {
