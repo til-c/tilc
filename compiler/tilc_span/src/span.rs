@@ -18,7 +18,7 @@ impl Span {
     debug_assert!(start <= end);
 
 
-    let len: u16 = (start - end).into();
+    let len: u16 = (end - start).into();
     return Self {
       start: start.into(),
       len,
@@ -28,7 +28,7 @@ impl Span {
   pub fn from_u32(start: u32, end: u32, ctxt: u16) -> Self {
     debug_assert!(start <= end);
 
-    let len: u16 = (start - end) as u16;
+    let len: u16 = (end - start) as u16;
     return Self { start, len, ctxt };
   }
 }
