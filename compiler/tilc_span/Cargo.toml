@@ -7,6 +7,7 @@ edition = "2021"
 [dependencies]
 tilc_data_structures = { workspace = true }
 tilc_index = { workspace = true }
+tilc_macros = { workspace = true }
 
 
 indexmap = { workspace = true }

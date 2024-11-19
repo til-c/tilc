@@ -9,6 +9,13 @@ uidx!(SymbolIdx; Clone, Copy, Debug, PartialEq, Eq, Hash);
 pub struct Symbol(SymbolIdx);
 impl Symbol {
   pub const fn new(idx: u32) -> Self {
+    use crate::keyword::PRE_INTERNED_SYMBOLS_LEN;
+    return Self(SymbolIdx(idx + PRE_INTERNED_SYMBOLS_LEN));
+  }
+
+
+  /// For symbols! macro use only
+  pub(super) const fn new_m(idx: u32) -> Self {
     return Self(SymbolIdx(idx));
   }
 

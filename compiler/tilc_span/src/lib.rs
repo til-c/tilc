@@ -1,6 +1,7 @@
 mod edition;
 mod file_loader;
 mod interner;
+mod keyword;
 mod module;
 mod pos;
 mod session;
@@ -12,6 +13,7 @@ mod symbol;
 pub use edition::*;
 pub use file_loader::*;
 pub use interner::*;
+pub use keyword::*;
 pub use module::*;
 pub use pos::*;
 pub use session::*;
