@@ -3,18 +3,39 @@ use tilc_session::ParseSession;
 use tilc_span::{ModuleIdx, Pos, Span, Symbol};
 
 
-struct TokenReader<'lex> {
+pub struct TokenReader<'psess, 'lex> {
   src: &'lex str,
   lexer: tilc_lexer::Lexer<'lex>,
-  parse_session: ParseSession,
+  parse_session: &'psess ParseSession,
 
-  start_post: Pos,
+  start_pos: Pos,
   pos: Pos,
 
   module_idx: ModuleIdx,
 }
-impl<'lex> TokenReader<'lex> {
-  fn next_token(&mut self) -> (Token, bool) {
+impl<'psess, 'lex> TokenReader<'psess, 'lex> {
+  pub fn new(
+    src: &'lex str,
+    lexer: tilc_lexer::Lexer<'lex>,
+    parse_session: &'psess ParseSession,
+    start_pos: Pos,
+    pos: Pos,
+    module_idx: ModuleIdx,
+  ) -> Self {
+    return Self {
+      src,
+
+      lexer,
+      parse_session,
+
+      start_pos,
+      pos,
+
+      module_idx,
+    };
+  }
+
+  pub fn next_token(&mut self) -> (Token, bool) {
     let mut with_whitespace: bool = false;
 
 
@@ -29,6 +50,7 @@ impl<'lex> TokenReader<'lex> {
         use tilc_ast::Delim::*;
         // using self instead of tilc_ast? But does it really matter??
         use tilc_ast::TokenKind::*;
+
 
         match token.kind {
           tilc_lexer::TokenKind::Whitespace => {
@@ -78,14 +100,14 @@ impl<'lex> TokenReader<'lex> {
           tilc_lexer::TokenKind::Bang => Not,
           tilc_lexer::TokenKind::Lt => Lt,
           tilc_lexer::TokenKind::Gt => Gt,
-          tilc_lexer::TokenKind::Minus => Minus,
-          tilc_lexer::TokenKind::Plus => Plus,
-          tilc_lexer::TokenKind::And => And,
-          tilc_lexer::TokenKind::Or => Or,
-          tilc_lexer::TokenKind::Star => Star,
-          tilc_lexer::TokenKind::Slash => Slash,
-          tilc_lexer::TokenKind::Caret => Caret,
-          tilc_lexer::TokenKind::Percent => Percent,
+          tilc_lexer::TokenKind::Minus => BinOp(tilc_ast::BinOp::Minus),
+          tilc_lexer::TokenKind::Plus => BinOp(tilc_ast::BinOp::Plus),
+          tilc_lexer::TokenKind::And => BinOp(tilc_ast::BinOp::And),
+          tilc_lexer::TokenKind::Or => BinOp(tilc_ast::BinOp::Or),
+          tilc_lexer::TokenKind::Star => BinOp(tilc_ast::BinOp::Star),
+          tilc_lexer::TokenKind::Slash => BinOp(tilc_ast::BinOp::Slash),
+          tilc_lexer::TokenKind::Caret => BinOp(tilc_ast::BinOp::Caret),
+          tilc_lexer::TokenKind::Percent => BinOp(tilc_ast::BinOp::Percent),
           tilc_lexer::TokenKind::Unknown => todo!(),
 
           tilc_lexer::TokenKind::Eof => Eof,
@@ -154,7 +176,7 @@ impl<'lex> TokenReader<'lex> {
     return Symbol::intern(self.str_from_to(start, end));
   }
   fn src_pos(&self, pos: Pos) -> usize {
-    return (pos - self.start_post).into();
+    return (pos - self.start_pos).into();
   }
 
 
@@ -179,12 +201,12 @@ mod test {
     let mut token_reader: TokenReader = TokenReader {
       src,
       lexer: tilc_lexer::Lexer::new(src),
-      parse_session: ParseSession {
+      parse_session: &ParseSession {
         edition: tilc_span::Edition::default(),
         symbol_repo: SymbolRepo::new(),
       },
 
-      start_post: Pos::new(0),
+      start_pos: Pos::new(0),
       pos: Pos::new(0),
 
       module_idx: ModuleIdx::new(0),
@@ -236,12 +258,12 @@ mod test {
     let mut token_reader: TokenReader = TokenReader {
       src,
       lexer: tilc_lexer::Lexer::new(src),
-      parse_session: ParseSession {
+      parse_session: &ParseSession {
         edition: tilc_span::Edition::default(),
         symbol_repo: SymbolRepo::new(),
       },
 
-      start_post: Pos::new(0),
+      start_pos: Pos::new(0),
       pos: Pos::new(0),
 
       module_idx: ModuleIdx::new(0),
