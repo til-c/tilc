@@ -1,0 +1,15 @@
+[package]
+name = "tilc_macros"
+version = "0.1.0"
+edition = "2021"
+
+
+[lib]
+proc-macro = true
+
+
+[dependencies]
+# External crates
+proc-macro2 = { workspace = true }
+syn = { workspace = true }
+quote = { workspace = true }
