@@ -31,4 +31,17 @@ impl Span {
     let len: u16 = (end - start) as u16;
     return Self { start, len, ctxt };
   }
+  fn end(&self) -> u32 {
+    return self.start + self.len as u32;
+  }
+
+
+  pub fn to(self, other: Self) -> Self {
+    let len: u16 = (other.end() - self.start) as u16;
+    return Self {
+      start: self.start,
+      len,
+      ctxt: self.ctxt,
+    };
+  }
 }
