@@ -38,10 +38,10 @@ pub struct Lexer<'a> {
   len_left: usize,
 }
 impl<'a> Lexer<'a> {
-  pub fn new(str: &'a str) -> Self {
+  pub fn new(src: &'a str) -> Self {
     return Self {
-      chars: str.chars(),
-      len_left: str.len(),
+      chars: src.chars(),
+      len_left: src.len(),
     };
   }
 
