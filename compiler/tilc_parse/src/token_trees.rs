@@ -1,0 +1,134 @@
+use tilc_advanced_lexer::TokenReader;
+
+use tilc_ast::{
+  Delim, DelimSpacing, DelimSpan, Spacing, Token, TokenKind, TokenStream,
+  TokenTree,
+};
+use tilc_span::{ErrorGuaranteed, Span};
+
+pub struct TokenTreesReader<'psess, 'lex> {
+  token_reader: TokenReader<'psess, 'lex>,
+  token: Token,
+}
+impl<'psess, 'lex> TokenTreesReader<'psess, 'lex> {
+  pub fn new(token_reader: TokenReader<'psess, 'lex>) -> Self {
+    return Self {
+      token_reader,
+      token: Token::EMPTY,
+    };
+  }
+
+  /// TODO: ERROR HANDLING
+  pub fn lex_token_trees(
+    &mut self,
+    from_delim: bool,
+  ) -> (Spacing, TokenStream, Result<(), ErrorGuaranteed>) {
+    // First step call for settings self.token
+    // Nothing to glue for the first call so glue param is false
+    let (spacing, _): (Spacing, Token) = self.step(false);
+
+
+    let mut buffer: Vec<TokenTree> = Vec::new();
+    loop {
+      match self.token.kind {
+        // TODO: Check for from_delim, return err in case from_delim is true
+        TokenKind::Eof => return (spacing, TokenStream::new(buffer), Ok(())),
+
+        TokenKind::OpenDelim(delim) => {
+          match self.lex_token_tree_in_open_delim(delim) {
+            Ok(token_tree) => buffer.push(token_tree),
+            Err(_) => todo!(),
+          };
+        }
+        TokenKind::CloseDelim(_delim) => {
+          // TODO: Implement Diagnostics
+          // Note: Do not put close delim token inside buffer
+          //       Close dedlims must be handled in `Self::lex_token_tree_in_open_delim`'
+          // Maybe there is a better way but idk
+          return (
+            spacing,
+            TokenStream::new(buffer),
+            if !from_delim { Ok(()) } else { todo!() },
+          );
+        }
+
+        _ => {
+          let (following_spacing, token): (Spacing, Token) = self.step(true);
+          buffer.push(TokenTree::Token(token, following_spacing));
+        }
+      }
+    }
+  }
+
+  fn lex_token_tree_in_open_delim(
+    &mut self,
+    opening_delim: Delim,
+  ) -> Result<TokenTree, ErrorGuaranteed> {
+    let delim_start_span: Span = self.token.span;
+    let (spacing, token_stream, err): (
+      Spacing,
+      TokenStream,
+      Result<(), ErrorGuaranteed>,
+    ) = self.lex_token_trees(true);
+    if let Err(_) = err {
+      todo!("Error handling is not implemented yet");
+    };
+
+
+    let delim_span: DelimSpan =
+      DelimSpan::from_pair(delim_start_span, self.token.span);
+    let close_spacing: Spacing = match self.token.kind {
+      // Case when closing and opening delims match
+      // If delims match just step one token forward
+      TokenKind::CloseDelim(delim) if delim == opening_delim => {
+        self.step(true).0
+      }
+
+      // Case when delims do not match
+      TokenKind::CloseDelim(delim) => {
+        todo!();
+      }
+      TokenKind::Eof => Spacing::Whitespaced,
+
+      _ => unreachable!(
+        "It was supposed to be unreachble part of the code, what did you do?"
+      ),
+    };
+
+    let delim_spacing: DelimSpacing = DelimSpacing::new(spacing, close_spacing);
+    return Ok(TokenTree::Delimited(
+      delim_span,
+      delim_spacing,
+      opening_delim,
+      token_stream,
+    ));
+  }
+
+  fn step(&mut self, glue: bool) -> (Spacing, Token) {
+    let (spacing, next_token): (Spacing, Token) = loop {
+      let (next_token, is_whitespaced): (Token, bool) =
+        self.token_reader.next_token();
+
+      if is_whitespaced {
+        break (Spacing::Sticked, next_token);
+      } else if glue && self.token.glueable(next_token).is_some() {
+        self.token = self
+          .token
+          .glueable(next_token)
+          .unwrap_or_else(|| unreachable!());
+      } else {
+        let spacing = if self.token.kind == TokenKind::Eof {
+          Spacing::Whitespaced
+        } else {
+          Spacing::Sticked
+        };
+
+        break (spacing, next_token);
+      }
+    };
+
+
+    let current_token: Token = std::mem::replace(&mut self.token, next_token);
+    return (spacing, current_token);
+  }
+}

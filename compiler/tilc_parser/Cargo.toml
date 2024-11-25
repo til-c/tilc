@@ -5,3 +5,6 @@ edition = "2021"
 
 
 [dependencies]
+# Internal packages
+tilc_ast = { workspace = true }
+tilc_session = { workspace = true }
