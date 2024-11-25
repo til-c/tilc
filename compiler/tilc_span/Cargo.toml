@@ -11,4 +11,5 @@ tilc_macros = { workspace = true }
 
 
 indexmap = { workspace = true }
+md-5 = { workspace = true }
 scoped-tls = { workspace = true }

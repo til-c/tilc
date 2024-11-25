@@ -22,6 +22,9 @@ pub use span::*;
 pub use symbol::*;
 
 
+use tilc_data_structures::Hash64;
+
+
 thread_local! {
   static SESSION_GLOBALS: SessionGlobals = SessionGlobals::new();
 }
@@ -34,3 +37,7 @@ where
 
 /// Struct for handling errors and representing the proof that error has been consumed
 pub struct ErrorGuaranteed(());
+
+
+#[derive(Hash)]
+pub struct StablePackageId(Hash64);
