@@ -1,6 +1,7 @@
 use std::hash;
 
 
+#[derive(Hash)]
 pub struct Hash64(u64);
 impl Hash64 {
   pub const EMPTY: Hash64 = Hash64(0);
@@ -14,8 +15,7 @@ impl Hash64 {
   }
 }
 
-
-#[derive(Clone)]
+#[derive(Clone, Hash)]
 pub struct Hash128(u128);
 impl Hash128 {
   fn truncate(&self) -> Hash64 {
@@ -25,8 +25,8 @@ impl Hash128 {
     return self.0;
   }
 }
-impl hash::Hash for Hash128 {
-  fn hash<H: hash::Hasher>(&self, h: &mut H) {
-    h.write_u64(self.truncate().as_u64());
-  }
-}
+// impl hash::Hash for Hash128 {
+//   fn hash<H: hash::Hasher>(&self, h: &mut H) {
+//     h.write_u64(self.truncate().as_u64());
+//   }
+// }
