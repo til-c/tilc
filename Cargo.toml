@@ -6,6 +6,7 @@ members = [
   "compiler/tilc_data_structures",
   "compiler/tilc_errors",
   "compiler/tilc_index",
+  "compiler/tilc_interface",
   "compiler/tilc_lexer",
   "compiler/tilc_log",
   "compiler/tilc_macros",
@@ -30,6 +31,7 @@ tilc_ast = { path = "compiler/tilc_ast" }
 tilc_data_structures = { path = "compiler/tilc_data_structures" }
 tilc_errors = { path = "compiler/tilc_errors" }
 tilc_index = { path = "compiler/tilc_index" }
+tilc_interface = { path = "compiler/tilc_interface" }
 tilc_lexer = { path = "compiler/tilc_lexer" }
 tilc_macros = { path = "compiler/tilc_macros" }
 tilc_parser = { path = "compiler/tilc_parser" }
@@ -41,5 +43,6 @@ tilc_span = { path = "compiler/tilc_span" }
 indexmap = { version = "2.6" }
 proc-macro2 = { version = "1.0.89" }
 quote = { version = "1.0.37" }
+md-5 = { version = "0.10.6" }
 scoped-tls = { version = "1.0.1" }
 syn = { version = "2.0.87", features = ["full"] }

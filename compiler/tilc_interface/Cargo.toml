@@ -1,0 +1,9 @@
+[package]
+name = "tilc_interface"
+version = "0.1.0"
+edition = "2021"
+
+
+[dependencies]
+tilc_errors = { workspace = true }
+tilc_span = { workspace = true }
