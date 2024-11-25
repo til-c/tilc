@@ -1,7 +1,7 @@
 use std::sync::RwLock;
 
 use indexmap::IndexMap;
-use tilc_span::{Edition, Span, Symbol};
+use tilc_span::{Edition, SourceMap, Span, Symbol};
 
 
 pub struct SymbolRepo {
@@ -24,4 +24,11 @@ pub struct ParseSession {
   pub edition: Edition,
 
   pub symbol_repo: SymbolRepo,
+
+  source_map: SourceMap,
+}
+impl ParseSession {
+  pub fn source_map(&self) -> &SourceMap {
+    return &self.source_map;
+  }
 }
