@@ -1,0 +1,8 @@
+[package]
+name = "tilc_backend_llvm"
+version = "0.1.0"
+edition = "2021"
+
+
+[dependencies]
+tilc_backend = { workspace = true }

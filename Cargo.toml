@@ -3,6 +3,8 @@ members = [
   "compiler/tilc",
   "compiler/tilc_advanced_lexer",
   "compiler/tilc_ast",
+  "compiler/tilc_backend",
+  "compiler/tilc_backend_llvm",
   "compiler/tilc_data_structures",
   "compiler/tilc_errors",
   "compiler/tilc_index",
@@ -28,6 +30,8 @@ rustflags = ["-Z", "threads=8"]
 # Internal packages
 tilc_advanced_lexer = { path = "compiler/tilc_advanced_lexer" }
 tilc_ast = { path = "compiler/tilc_ast" }
+tilc_backend = { path = "compiler/tilc_backend" }
+tilc_backend_llvm = { path = "compiler/tilc_backend_llvm" }
 tilc_data_structures = { path = "compiler/tilc_data_structures" }
 tilc_errors = { path = "compiler/tilc_errors" }
 tilc_index = { path = "compiler/tilc_index" }
