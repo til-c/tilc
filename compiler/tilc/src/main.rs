@@ -1,4 +1,6 @@
-use tilc_interface::{catch_if_error, Compiler};
+use std::ffi::OsString;
+
+use tilc_interface::{catch_if_error, Runner};
 
 
 fn main() -> ! {
@@ -9,12 +11,16 @@ fn main() -> ! {
   //   }
   //   vec
   // };
-  let args: Vec<String> =
-    std::env::args().enumerate().map(|(_, arg)| arg).collect();
+  // TODO: Configuration options
+  // NOTE: For now compiler assumes that first arg is always path to a file
+  let args: Vec<String> = std::env::args()
+    .enumerate()
+    .map(|(_, arg): (_, String)| arg)
+    .collect();
 
 
   let exit_code: i32 = match catch_if_error(|| {
-    return Compiler::new(&args).run();
+    return Runner::new(&args[1..]).run();
   }) {
     Ok(_) => 0,
     Err(_) => 1,
