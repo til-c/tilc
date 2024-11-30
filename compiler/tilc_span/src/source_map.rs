@@ -21,7 +21,7 @@ pub struct SourceMap {
   // pub file_mapping: ,
 
   // NOTE: Ignored for now
-  _hash_algorithm: SourceFileHashAlgorithm,
+  pub(crate) _hash_algorithm: SourceFileHashAlgorithm,
 }
 impl SourceMap {
   pub fn new() -> Self {

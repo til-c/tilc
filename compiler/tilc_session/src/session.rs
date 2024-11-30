@@ -3,21 +3,21 @@ use std::path::PathBuf;
 use crate::{Input, Options, ParseSession};
 
 pub struct Target {
-  triplet: String,
-  architecture: String,
+  pub triplet: String,
+  pub architecture: String,
 }
 pub struct IO {
-  input: Input,
-  output_dir: PathBuf,
-  output_file: PathBuf,
+  pub input: Input,
+  pub output_dir: PathBuf,
+  pub output_file: PathBuf,
 }
 
 
 pub struct Session {
-  target: Target,
-  opts: Options,
-  parse_session: ParseSession,
-  root: PathBuf,
-  io: IO,
+  pub target: Target,
+  pub opts: Options,
+  pub parse_session: ParseSession,
+  pub sys_root: PathBuf,
+  pub io: IO,
 }
 impl Session {}
