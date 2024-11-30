@@ -1,8 +1,8 @@
 #[macro_export]
 macro_rules! uidx {
-  ($name:ident$(;),* $($derives:ident),*) => {
+  ($vis:vis $name:ident$(;),* $($derives:ident),*) => {
     #[derive($($derives),*)]
-    pub struct $name(u32);
+    $vis struct $name(u32);
 
     impl $name {
       pub const fn new(idx: u32) -> Self {
