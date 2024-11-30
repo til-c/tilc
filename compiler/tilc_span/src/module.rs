@@ -1,3 +1,5 @@
 use tilc_index::uidx;
 
-uidx!(pub ModuleIdx);
+uidx! {
+  pub struct ModuleIdx;
+}

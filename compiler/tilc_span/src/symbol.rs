@@ -2,11 +2,15 @@ use tilc_index::uidx;
 
 use crate::{with_session_globals, SessionGlobals};
 
-uidx!(SymbolIdx; Clone, Copy, Debug, PartialEq, Eq, Hash);
+
+uidx! {
+  #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+  pub struct SymbolIdx;
+}
 
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub struct Symbol(SymbolIdx);
+pub struct Symbol(pub SymbolIdx);
 impl Symbol {
   pub const fn new(idx: u32) -> Self {
     use crate::keyword::PRE_INTERNED_SYMBOLS_LEN;
