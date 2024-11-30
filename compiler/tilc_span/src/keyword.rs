@@ -52,7 +52,7 @@ symbols! {
     // SelfType : "Ozi",
     // Static: "",
     // StaticLifetime: "",
-    Struct: "zat",
+    Struct: "zat", // Or maybe qurylym??
     // Super: "",
     Trait: "qasiet",
     True: "durys",
