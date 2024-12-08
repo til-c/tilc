@@ -2,11 +2,12 @@ use tilc_macros::symbols;
 
 
 // NOTE: Do not remove this import (It is used for importing Symbol for macro generated code)
+use super::Interner;
 use super::Symbol;
 symbols! {
   Keywords {
     // Abstract : "",
-    // As: "",
+    As: "sekildi",
     // Async: "",
     // Auto: "",
     // Await: "",
@@ -17,53 +18,53 @@ symbols! {
     // Catch: "",
     Const: "turaqty",
     // Continue: "jalgastyr",
-    // Crate: "", How to name crate?
+    Crate: "sandyq", // How to name crate?
     // Default: "",
     // Do : "",
     // Dyn: "",
     Else: "bolmasa",
-    // Enum: "",
-    // Extern: "",
+    Enum: "tizbe",
+    Extern: "syrtqy",
     False: "burys",
     // Final: "",
     Function: "fx",
-    For: "eger",
+    For: "ushin",
     // Gen: "",
-    // If: "",
-    // Impl: "",
+    If: "eger",
+    Impl: "asyru",
     // In: "",
     Let: "ainymaly",
     // Loop: "",
     // Macro: "macro",
     // MacroRules: "",
-    // Match: "",
+    Match: "saikestir",
     // Mod: "",
     // Move: "",
     Mut : "auspaly",
     // Override: "",
     // Priv: "",
-    // Pub: "",
+    Pub: "barsha",
     // Raw: "",
     // Ref: "",
     Return: "qaitar",
     // Reuse: "",
     // Safe: "qauipsiz",
-    // SelfValue : "ozi",
-    // SelfType : "Ozi",
+    SelfValue : "ozi",
+    SelfType : "Ozi",
     // Static: "",
     // StaticLifetime: "",
-    Struct: "zat", // Or maybe qurylym??
+    Struct: "qurylym", // zat/qurylym??
     // Super: "",
     Trait: "qasiet",
     True: "durys",
     // Try: "",
-    // Type: "",
+    Type: "tur",
     // Typeof: "",
-    // UnderscoreLifetime: "",
+    UnderscoreLifetime: "'_",
     // Union: "",
     // Unsafe: "Qauipti",
     // Unsized: "sheksiz",
-    // Use: "qoldan",
+    Use: "paidalan",
     // Virtual: "",
     // Where: "",
     // While: "",
@@ -74,4 +75,4 @@ symbols! {
 
 
 // NOTE: kw generated in symbols macro
-pub use kw::*;
+// pub use kw::*;

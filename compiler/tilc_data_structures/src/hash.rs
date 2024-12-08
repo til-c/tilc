@@ -1,7 +1,7 @@
 use std::hash;
 
 
-#[derive(Hash)]
+#[derive(Clone, Debug, Hash, PartialEq, Eq)]
 pub struct Hash64(u64);
 impl Hash64 {
   pub const EMPTY: Hash64 = Hash64(0);

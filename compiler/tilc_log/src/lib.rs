@@ -5,6 +5,7 @@ impl Logger {
   fn log(&self, l_level: LogLevel, msg: String) {
     let res: io::Result<()> = match l_level {
       LogLevel::Info => {
+        println!("12");
         fs::write(Path::new("./log.txt"), format!("[INFO]: {}\n", msg))
       }
 
@@ -33,13 +34,4 @@ enum LogLevel {
 
 thread_local! {
   pub static LOGGER: RwLock<Logger> = RwLock::new(Logger);
-}
-
-
-fn main() {
-  LOGGER.with(|logger| {
-    let inner = logger.write().unwrap();
-
-    inner.info("msg".to_string());
-  });
 }

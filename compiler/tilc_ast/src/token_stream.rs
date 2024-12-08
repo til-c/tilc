@@ -6,6 +6,7 @@ use tilc_span::Span;
 
 use crate::{Delim, Token, TokenKind};
 
+#[derive(Clone, Debug)]
 pub struct TokenCursor {
   token_tree_cursor: TokenTreeCursor,
 
@@ -62,7 +63,7 @@ impl TokenCursor {
     }
   }
 }
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct TokenTreeCursor {
   stream: TokenStream,
   idx: usize,
@@ -87,7 +88,7 @@ impl TokenTreeCursor {
   }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum TokenTree {
   /// Single token and spacing info
   Token(Token, Spacing),
@@ -117,12 +118,12 @@ impl TokenTree {
   }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub enum Spacing {
   Whitespaced,
   Sticked,
 }
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct DelimSpan {
   pub start: Span,
   pub end: Span,
@@ -139,13 +140,10 @@ impl DelimSpan {
   }
 
   pub fn entire(&self) -> Span {
-    let ctxt: u16 = self.start.ctxt;
-    let end: u32 = self.end.start + (self.end.len as u32);
-
-    Span::from_u32(self.start.start, end, ctxt)
+    return self.start.with_hi(self.end.hi());
   }
 }
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct DelimSpacing {
   pub start: Spacing,
   pub end: Spacing,
@@ -157,7 +155,7 @@ impl DelimSpacing {
 }
 
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct TokenStream(pub Rc<Vec<TokenTree>>);
 impl TokenStream {
   pub fn new(t_tree: Vec<TokenTree>) -> Self {

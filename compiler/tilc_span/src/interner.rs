@@ -12,6 +12,12 @@ impl Interner {
     }));
   }
 
+  pub(super) fn prefill(init: &[&'static str]) -> Self {
+    return Interner(RwLock::new(InnerInterner {
+      strings: init.iter().copied().collect(),
+    }));
+  }
+
   pub fn intern(&self, string: &str) -> Symbol {
     let mut inner: RwLockWriteGuard<'_, InnerInterner> = self.lock();
     if let Some(idx) = inner.strings.get_index_of(string) {

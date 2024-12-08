@@ -1,4 +1,5 @@
 [workspace]
+default-members = ["compiler/tilc"]
 members = [
   "compiler/tilc",
   "compiler/tilc_advanced_lexer",
@@ -18,7 +19,6 @@ members = [
   "compiler/tilc_session",
   "compiler/tilc_span",
 ]
-default-members = ["compiler/tilc"]
 resolver = "2"
 
 
@@ -38,6 +38,7 @@ tilc_index = { path = "compiler/tilc_index" }
 tilc_interface = { path = "compiler/tilc_interface" }
 tilc_lexer = { path = "compiler/tilc_lexer" }
 tilc_macros = { path = "compiler/tilc_macros" }
+tilc_parse = { path = "compiler/tilc_parse" }
 tilc_parser = { path = "compiler/tilc_parser" }
 tilc_session = { path = "compiler/tilc_session" }
 tilc_span = { path = "compiler/tilc_span" }
@@ -45,8 +46,8 @@ tilc_span = { path = "compiler/tilc_span" }
 
 # External crates
 indexmap = { version = "2.6" }
+md-5 = { version = "0.10.6" }
 proc-macro2 = { version = "1.0.89" }
 quote = { version = "1.0.37" }
-md-5 = { version = "0.10.6" }
 scoped-tls = { version = "1.0.1" }
 syn = { version = "2.0.87", features = ["full"] }

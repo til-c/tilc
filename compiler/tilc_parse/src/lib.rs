@@ -8,11 +8,11 @@ use tilc_ast::TokenStream;
 use tilc_lexer::Lexer;
 use tilc_parser::Parser;
 use tilc_session::ParseSession;
-use tilc_span::{ErrorGuaranteed, ModuleIdx, Pos, SourceFile};
+use tilc_span::{BytePos, ErrorGuaranteed, ModuleIdx, SourceFile};
 use token_trees::TokenTreesReader;
 
 
-fn new_parser_from_file<'psess>(
+pub fn new_parser_from_file<'psess>(
   parse_session: &'psess ParseSession,
   path: &Path,
 ) -> Result<Parser<'psess>, ErrorGuaranteed> {
@@ -23,7 +23,7 @@ fn new_parser_from_file<'psess>(
 fn new_parser_from_source_file<'psess>(
   parse_session: &'psess ParseSession,
   source_file: Rc<SourceFile>,
-) -> Result<Parser<'_>, ErrorGuaranteed> {
+) -> Result<Parser<'psess>, ErrorGuaranteed> {
   let token_stream: TokenStream =
     source_file_to_stream(parse_session, source_file)?;
   let parser: Parser<'_> = Parser::new(parse_session, token_stream);
@@ -42,7 +42,7 @@ fn source_file_to_stream<'psess>(
 pub fn lex_token_stream<'psess, 'src>(
   parse_session: &'psess ParseSession,
   src: &'src str,
-  start_pos: Pos,
+  start_pos: BytePos,
 ) -> Result<TokenStream, ErrorGuaranteed> {
   let lexer: Lexer = Lexer::new(src);
   let token_reader: TokenReader = TokenReader::new(

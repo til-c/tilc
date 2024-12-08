@@ -5,8 +5,11 @@ edition = "2021"
 
 
 [dependencies]
+tilc_ast = { workspace = true }
 tilc_backend = { workspace = true }
 tilc_backend_llvm = { workspace = true }
+tilc_parse = { workspace = true }
+tilc_parser = { workspace = true }
 tilc_session = { workspace = true }
 tilc_errors = { workspace = true }
 tilc_span = { workspace = true }

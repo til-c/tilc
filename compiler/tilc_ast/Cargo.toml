@@ -5,4 +5,5 @@ edition = "2021"
 
 
 [dependencies]
+tilc_index = { workspace = true }
 tilc_span = { workspace = true }

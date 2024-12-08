@@ -8,3 +8,5 @@ edition = "2021"
 # Internal packages
 tilc_ast = { workspace = true }
 tilc_session = { workspace = true }
+tilc_span = { workspace = true }
+tilc_errors = { workspace = true }

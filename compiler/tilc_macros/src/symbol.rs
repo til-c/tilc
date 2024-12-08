@@ -70,6 +70,7 @@ pub fn symbols(input: TokenStream) -> TokenStream {
   };
 
   let mut keywords: TokenStream = quote! {};
+  let mut interner_prefill: TokenStream = quote! {};
   let mut entries: Entries = Entries::with_capacity(input.keywords.len());
 
 
@@ -77,6 +78,10 @@ pub fn symbols(input: TokenStream) -> TokenStream {
     let name: &Ident = &keyword.name;
     let value: &LitStr = &keyword.value;
     let idx: u32 = entries.insert(&value.value(), name.span());
+
+    interner_prefill.extend(quote! {
+      #value,
+    });
     keywords.extend(quote! {
       pub const #name: Symbol = Symbol::new_m(#idx);
     });
@@ -89,9 +94,15 @@ pub fn symbols(input: TokenStream) -> TokenStream {
 
 
     #[allow(non_upper_case_globals, unused)]
-    mod kw {
+    pub mod kw {
       use super::Symbol;
       #keywords
+    }
+
+    impl Interner {
+      pub fn with_prefilled() -> Self {
+        return Self::prefill(&[#interner_prefill]);
+      }
     }
   };
 }

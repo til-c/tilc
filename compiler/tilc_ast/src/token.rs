@@ -1,4 +1,4 @@
-use tilc_span::{Span, Symbol};
+use tilc_span::{Identifier, Span, Symbol};
 
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -132,13 +132,6 @@ pub enum TokenKind {
 }
 
 
-pub struct Identifier {
-  pub symbol: Box<str>,
-  pub span: Span,
-  pub raw: bool,
-}
-
-
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Token {
   pub kind: TokenKind,
@@ -206,5 +199,25 @@ impl Token {
 
 
     return Some(Token::new(kind, self.span.to(next_token.span)));
+  }
+
+  pub fn ident(&self) -> Option<(Identifier, bool)> {
+    return match self.kind {
+      TokenKind::Identifier(symbol, raw) => Some((
+        Identifier {
+          symbol,
+          span: self.span,
+        },
+        raw,
+      )),
+
+      _ => None,
+    };
+  }
+  pub fn is_kw(&self, kw: Symbol) -> bool {
+    return match self.kind {
+      TokenKind::Identifier(name, raw) if raw == false && name == kw => true,
+      _ => false,
+    };
   }
 }

@@ -48,7 +48,7 @@ impl<'psess, 'lex> TokenTreesReader<'psess, 'lex> {
           return (
             spacing,
             TokenStream::new(buffer),
-            if !from_delim { Ok(()) } else { todo!() },
+            if from_delim { Ok(()) } else { todo!() },
           );
         }
 
@@ -110,7 +110,7 @@ impl<'psess, 'lex> TokenTreesReader<'psess, 'lex> {
         self.token_reader.next_token();
 
       if is_whitespaced {
-        break (Spacing::Sticked, next_token);
+        break (Spacing::Whitespaced, next_token);
       } else if glue && self.token.glueable(next_token).is_some() {
         self.token = self
           .token

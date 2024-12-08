@@ -5,6 +5,8 @@ macro_rules! uidx {
       $(#[derive($($derives,)*)])*
       $vis struct $name(u32);
       impl $name {
+        pub const EMPTY: Self = Self::new(u32::MAX);
+
         pub const fn new(idx: u32) -> Self {
           return Self(idx);
         }

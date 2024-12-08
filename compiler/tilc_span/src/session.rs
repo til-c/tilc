@@ -13,7 +13,7 @@ pub struct SessionGlobals {
 impl SessionGlobals {
   pub fn new() -> Self {
     return Self {
-      symbol_interner: Interner::new(),
+      symbol_interner: Interner::with_prefilled(),
 
       source_map: Some(Rc::new(SourceMap {
         file_loader: Box::new(ActualFileLoader),

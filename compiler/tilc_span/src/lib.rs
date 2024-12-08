@@ -1,7 +1,7 @@
 mod edition;
 mod file_loader;
 mod interner;
-mod keyword;
+pub mod keyword;
 mod module;
 mod pos;
 mod session;

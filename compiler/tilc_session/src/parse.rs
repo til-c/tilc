@@ -4,6 +4,7 @@ use indexmap::IndexMap;
 use tilc_span::{Edition, SourceMap, Span, Symbol};
 
 
+#[derive(Debug)]
 pub struct SymbolRepo {
   pub symbols: RwLock<IndexMap<Symbol, Span>>,
 }
@@ -20,6 +21,7 @@ impl SymbolRepo {
     self.symbols.write().unwrap().entry(symbol).or_insert(span);
   }
 }
+#[derive(Debug)]
 pub struct ParseSession {
   pub edition: Edition,
 

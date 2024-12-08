@@ -1,16 +1,7 @@
-use std::ffi::OsString;
-
 use tilc_interface::{catch_if_error, Runner};
 
 
 fn main() -> ! {
-  // let args = {
-  //   let mut vec: Vec<String> = Vec::new();
-  //   for (i, arg) in std::env::args().enumerate() {
-  //     vec.push(arg);
-  //   }
-  //   vec
-  // };
   // TODO: Configuration options
   // NOTE: For now compiler assumes that first arg is always path to a file
   let args: Vec<String> = std::env::args()

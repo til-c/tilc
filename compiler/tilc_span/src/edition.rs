@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub enum Edition {
   // Don't know the release year yet
   E20xx,

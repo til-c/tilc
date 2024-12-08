@@ -1,6 +1,7 @@
 use std::ops::Deref;
 
 
+#[derive(Debug)]
 pub struct UnidirectionalVec<T>(Vec<T>);
 impl<T> UnidirectionalVec<T> {
   pub fn push(&mut self, item: T) {

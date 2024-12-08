@@ -1,6 +1,6 @@
 use tilc_ast::{Token, TokenKind};
 use tilc_session::ParseSession;
-use tilc_span::{ModuleIdx, Pos, Span, Symbol};
+use tilc_span::{BytePos, ModuleIdx, Pos, Span, SpanContext, Symbol};
 
 
 pub struct TokenReader<'psess, 'lex> {
@@ -8,8 +8,8 @@ pub struct TokenReader<'psess, 'lex> {
   lexer: tilc_lexer::Lexer<'lex>,
   parse_session: &'psess ParseSession,
 
-  start_pos: Pos,
-  pos: Pos,
+  start_pos: BytePos,
+  pos: BytePos,
 
   module_idx: ModuleIdx,
 }
@@ -18,8 +18,8 @@ impl<'psess, 'lex> TokenReader<'psess, 'lex> {
     src: &'lex str,
     lexer: tilc_lexer::Lexer<'lex>,
     parse_session: &'psess ParseSession,
-    start_pos: Pos,
-    pos: Pos,
+    start_pos: BytePos,
+    pos: BytePos,
     module_idx: ModuleIdx,
   ) -> Self {
     return Self {
@@ -42,8 +42,8 @@ impl<'psess, 'lex> TokenReader<'psess, 'lex> {
     loop {
       let mut initial_str: &str = self.lexer.as_str();
       let token: tilc_lexer::Token = self.lexer.char_to_token();
-      let start: Pos = self.pos;
-      self.pos += Pos::new(token.len as u32);
+      let start: BytePos = self.pos;
+      self.pos += BytePos::from_usize(token.len);
 
 
       let kind: TokenKind = {
@@ -65,12 +65,20 @@ impl<'psess, 'lex> TokenReader<'psess, 'lex> {
           tilc_lexer::TokenKind::InvalidIdentifier => todo!(),
 
           tilc_lexer::TokenKind::Literal { kind, suffix_pos } => {
-            let suffix_pos: Pos = start + Pos::new(suffix_pos);
+            let suffix_pos: BytePos = start + BytePos::from_u32(suffix_pos);
             let (literal_kind, symbol): (tilc_ast::LiteralKind, Symbol) =
               self.literal(kind, start, suffix_pos);
 
-            let suffix: Option<Symbol> =
-              if suffix_pos < self.pos { todo!() } else { None };
+            let suffix: Option<Symbol> = if suffix_pos < self.pos {
+              let str: &str = self.str_from(suffix_pos);
+              if str == "_" {
+                todo!("empty underscore suffix")
+              }
+
+              Some(Symbol::intern(str))
+            } else {
+              None
+            };
 
             Literal(tilc_ast::Literal {
               kind: literal_kind,
@@ -120,7 +128,7 @@ impl<'psess, 'lex> TokenReader<'psess, 'lex> {
     }
   }
 
-  fn identifier(&self, start: Pos) -> TokenKind {
+  fn identifier(&self, start: BytePos) -> TokenKind {
     let symbol: Symbol = Symbol::intern(self.str_from(start));
     let span: Span = self.mk_span(start, self.pos);
     self.parse_session.symbol_repo.insert(symbol, span);
@@ -129,8 +137,8 @@ impl<'psess, 'lex> TokenReader<'psess, 'lex> {
   fn literal(
     &self,
     literal_kind: tilc_lexer::LiteralKind,
-    start: Pos,
-    suffix_pos: Pos,
+    start: BytePos,
+    suffix_pos: BytePos,
   ) -> (tilc_ast::LiteralKind, Symbol) {
     return match literal_kind {
       tilc_lexer::LiteralKind::Int { base } => {
@@ -166,22 +174,22 @@ impl<'psess, 'lex> TokenReader<'psess, 'lex> {
   }
 
 
-  fn str_from_to(&self, start: Pos, end: Pos) -> &str {
+  fn str_from_to(&self, start: BytePos, end: BytePos) -> &str {
     return &self.src[self.src_pos(start)..self.src_pos(end)];
   }
-  fn str_from(&self, start: Pos) -> &str {
+  fn str_from(&self, start: BytePos) -> &str {
     return self.str_from_to(start, self.pos);
   }
-  fn symbol_from_to(&self, start: Pos, end: Pos) -> Symbol {
+  fn symbol_from_to(&self, start: BytePos, end: BytePos) -> Symbol {
     return Symbol::intern(self.str_from_to(start, end));
   }
-  fn src_pos(&self, pos: Pos) -> usize {
-    return (pos - self.start_pos).into();
+  fn src_pos(&self, pos: BytePos) -> usize {
+    return (pos - self.start_pos).to_usize();
   }
 
 
-  /// Always returns span with module_idx context
-  fn mk_span(&self, start: Pos, end: Pos) -> Span {
-    return Span::new(start, end, self.module_idx.idx() as u16);
+  /// Always returns span with 0 ctxt
+  fn mk_span(&self, lo: BytePos, hi: BytePos) -> Span {
+    return Span::new(lo, hi, SpanContext::ROOT, None);
   }
 }
