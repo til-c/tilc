@@ -2,7 +2,3 @@
 	path = til_book
 	url = https://github.com/til-c/til-book
 
-[submodule "src/llvm-project"]
-	path = src/llvm-project
-	url = https://github.com/llvm/llvm-project
-	branch = release/19.x
