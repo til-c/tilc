@@ -46,4 +46,4 @@ impl ErrorGuaranteed {
 
 
 #[derive(Hash)]
-pub struct StablePackageId(Hash64);
+pub struct SandyqId(Hash64);

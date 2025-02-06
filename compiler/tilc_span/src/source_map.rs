@@ -11,7 +11,7 @@ use md5::{Digest, Md5};
 
 use tilc_data_structures::{Hash64, UnidirectionalVec};
 
-use crate::{ActualFileLoader, BytePos, FileLoader, Pos, StablePackageId};
+use crate::{ActualFileLoader, BytePos, FileLoader, Pos, SandyqId};
 
 
 /// If content of the file exceeds u32 4gb (4000000000 chars assuming 1 char = 1 byte)
@@ -213,7 +213,7 @@ impl SourceFileHashId {
 
   pub fn from_filename_and_package(
     filename: &FileName,
-    package: Option<StablePackageId>,
+    package: Option<SandyqId>,
   ) -> Self {
     let mut hasher: DefaultHasher = DefaultHasher::new();
     filename.hash(&mut hasher);
