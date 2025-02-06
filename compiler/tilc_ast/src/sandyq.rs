@@ -46,10 +46,69 @@ pub struct Item<K = ItemKind> {
 pub type ItemInfo = (Identifier, ItemKind);
 
 #[derive(Debug)]
-pub enum TyKind {}
+pub struct Path {}
+
+#[derive(Debug)]
+pub struct Const {
+  pub idx: NodeIdx,
+  pub expression: Expression,
+}
+#[derive(Debug)]
+pub struct MutTy {
+  pub ty: Box<Ty>,
+  pub mutable: bool,
+}
+#[derive(Debug)]
+pub struct Lifetime {
+  pub idx: NodeIdx,
+  pub ident: Identifier,
+}
+#[derive(Debug)]
+pub enum TyKind {
+  /// No-return type
+  ///
+  /// !
+  Never,
+
+  /// Autodetect type
+  ///
+  /// _
+  Infer,
+
+  /// Reference type
+  ///
+  /// [`&'a T`], [`&'a auspaly T`], [`&T`], [`&auspaly T`]
+  Ref(Option<Lifetime>, MutTy),
+
+  // TODO:
+  /// Pointer type
+  Ptr(),
+
+  /// Fixed array size
+  ///
+  /// [b8; 2]
+  Array(Box<Ty>, Const),
+
+  /// Non fixed array size
+  ///
+  /// [b8]
+  Slice(Box<Ty>),
+
+  /// Tuple
+  ///
+  /// (b8, b16, b32)
+  Tuple(Vec<Box<Ty>>),
+
+  /// ```til
+  /// qurylum Alma {};
+  /// ```
+  /// Alma
+  Path(Path),
+}
 #[derive(Debug)]
 pub struct Ty {
   pub idx: NodeIdx,
+
   pub kind: TyKind,
   pub span: Span,
 }
@@ -77,9 +136,17 @@ pub struct Generics {
 #[derive(Debug)]
 pub struct Local {
   pub idx: NodeIdx,
+
+  pub kind: LocalKind,
   pub ty: Option<Ty>,
   pub span: Span,
 }
+#[derive(Debug)]
+pub enum LocalKind {
+  Decl,
+  Init(Expression),
+}
+
 #[derive(Debug)]
 pub enum ExpressionKind {}
 #[derive(Debug)]
@@ -155,9 +222,13 @@ pub enum ItemKind {
   Const(),
   Static(),
 
+  TyAlias(),
+
   Struct(),
   Enum(),
   Union(),
+
+  Mod(),
 
   Trait(),
   Impl(),

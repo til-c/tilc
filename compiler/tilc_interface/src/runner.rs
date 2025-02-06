@@ -1,8 +1,8 @@
 use std::{path::PathBuf, rc::Rc};
 
 
-use crate::util;
 use crate::{compiler::Compiler, interface};
+use crate::{util, Computation};
 
 use tilc_ast::Sandyq;
 use tilc_backend::Backend;
@@ -69,8 +69,15 @@ impl<'a> Runner<'a> {
     };
     let compiler: Compiler = Compiler::new(session, backend);
 
-    let sandyq: Sandyq = parse(&compiler.session)?;
-    println!("{:#?}", sandyq);
+    compiler.enter(|computation: &Computation<'_>| {
+      computation.parse()?;
+      println!("{:#?}", computation.parse()?);
+
+      return Ok(());
+    })?;
+
+    // let sandyq: Sandyq = parse(&compiler.session)?;
+    // println!("{:#?}", sandyq);
 
     todo!()
   }

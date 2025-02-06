@@ -1,11 +1,11 @@
-use crate::Parser;
+use crate::{ExpectedToken, Parser};
 
 use tilc_ast::{
   Block, Delim, Fn, FnDecl, FnHeader, FnReturnType, FnSig, Generics, Item,
   ItemInfo, ItemKind, NodeIdx, Param, Sandyq, Statement, Token, TokenKind,
   Visibility, VisibilityKind,
 };
-use tilc_errors::PResult;
+use tilc_errors::{Diag, PResult};
 use tilc_span::{kw, Identifier, Span, Symbol};
 
 
@@ -15,7 +15,11 @@ impl<'a> Parser<'a> {
       self.step();
       return Ok(self.token);
     } else {
-      todo!();
+      let diag: Diag<'a> = self.dcx().create_error(ExpectedToken {
+        expected_token_kind: *token_kind,
+        current_token: self.token,
+      });
+      return Err(diag);
     };
   }
   pub fn expect_any_of(
@@ -70,7 +74,7 @@ impl<'a> Parser<'a> {
     }
 
     if !self.step_if(stopper) {
-      return Err(todo!());
+      todo!();
     };
 
 

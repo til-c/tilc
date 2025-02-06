@@ -36,7 +36,13 @@ where
 
 
 /// Struct for handling errors and representing the proof that error has been consumed
+#[derive(Clone, Copy, Debug)]
 pub struct ErrorGuaranteed(());
+impl ErrorGuaranteed {
+  pub fn new_unchecked() -> Self {
+    return Self(());
+  }
+}
 
 
 #[derive(Hash)]

@@ -132,4 +132,5 @@ pub enum LiteralKind {
   Char,
   Byte,
   String,
+  RawString,
 }

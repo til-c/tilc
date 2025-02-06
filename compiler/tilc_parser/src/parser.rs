@@ -1,4 +1,5 @@
 use tilc_ast::{Delim, Spacing, Token, TokenCursor, TokenKind, TokenStream};
+use tilc_errors::{DiagCtxt, DiagCtxtHandle};
 use tilc_session::ParseSession;
 use tilc_span::Symbol;
 
@@ -36,6 +37,10 @@ impl<'psess> Parser<'psess> {
     parser.pos = 0;
 
     return parser;
+  }
+
+  pub fn dcx(&self) -> DiagCtxtHandle<'psess> {
+    return self.parse_session.dcx();
   }
 }
 impl Parser<'_> {

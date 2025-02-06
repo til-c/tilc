@@ -64,7 +64,7 @@ symbols! {
     // Union: "",
     // Unsafe: "Qauipti",
     // Unsized: "sheksiz",
-    Use: "paidalan",
+    Use: "ash",
     // Virtual: "",
     // Where: "",
     // While: "",

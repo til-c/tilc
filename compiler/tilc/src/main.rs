@@ -16,5 +16,5 @@ fn main() -> ! {
     Ok(_) => 0,
     Err(_) => 1,
   };
-  std::process::exit(exit_code)
+  std::process::exit(exit_code);
 }

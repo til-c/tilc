@@ -1,6 +1,7 @@
 use std::{rc::Rc, sync::RwLock};
 
 use indexmap::IndexMap;
+use tilc_errors::{DiagCtxt, DiagCtxtHandle};
 use tilc_span::{Edition, SourceMap, Span, Symbol};
 
 
@@ -23,6 +24,8 @@ impl SymbolRepo {
 }
 #[derive(Debug)]
 pub struct ParseSession {
+  dcx: DiagCtxt,
+
   pub edition: Edition,
 
   pub symbol_repo: SymbolRepo,
@@ -32,6 +35,8 @@ pub struct ParseSession {
 impl ParseSession {
   pub fn new(source_map: Rc<SourceMap>) -> Self {
     return Self {
+      dcx: DiagCtxt::new(),
+
       edition: Edition::default(),
       symbol_repo: SymbolRepo::new(),
 
@@ -41,5 +46,10 @@ impl ParseSession {
 
   pub fn source_map(&self) -> &SourceMap {
     return &self.source_map;
+  }
+
+
+  pub fn dcx(&self) -> DiagCtxtHandle {
+    return self.dcx.handle();
   }
 }

@@ -1,10 +1,11 @@
 [package]
+edition = "2021"
 name = "tilc_session"
 version = "0.1.0"
-edition = "2021"
 
 
 [dependencies]
+tilc_errors = { workspace = true }
 tilc_span = { workspace = true }
 
 

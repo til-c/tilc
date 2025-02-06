@@ -1,6 +1,6 @@
 use tilc_ast::{Token, TokenKind};
 use tilc_session::ParseSession;
-use tilc_span::{BytePos, ModuleIdx, Pos, Span, SpanContext, Symbol};
+use tilc_span::{BytePos, Pos, Span, SpanContext, Symbol};
 
 
 pub struct TokenReader<'psess, 'lex> {
@@ -10,8 +10,6 @@ pub struct TokenReader<'psess, 'lex> {
 
   start_pos: BytePos,
   pos: BytePos,
-
-  module_idx: ModuleIdx,
 }
 impl<'psess, 'lex> TokenReader<'psess, 'lex> {
   pub fn new(
@@ -20,7 +18,6 @@ impl<'psess, 'lex> TokenReader<'psess, 'lex> {
     parse_session: &'psess ParseSession,
     start_pos: BytePos,
     pos: BytePos,
-    module_idx: ModuleIdx,
   ) -> Self {
     return Self {
       src,
@@ -30,8 +27,6 @@ impl<'psess, 'lex> TokenReader<'psess, 'lex> {
 
       start_pos,
       pos,
-
-      module_idx,
     };
   }
 
@@ -40,7 +35,6 @@ impl<'psess, 'lex> TokenReader<'psess, 'lex> {
 
 
     loop {
-      let mut initial_str: &str = self.lexer.as_str();
       let token: tilc_lexer::Token = self.lexer.char_to_token();
       let start: BytePos = self.pos;
       self.pos += BytePos::from_usize(token.len);
@@ -87,7 +81,12 @@ impl<'psess, 'lex> TokenReader<'psess, 'lex> {
             })
           }
 
-          tilc_lexer::TokenKind::Lifetime => todo!(),
+          tilc_lexer::TokenKind::Lifetime => {
+            // 'a
+            let lifetime_ident: Symbol = Symbol::intern(self.str_from(start));
+            println!("{:?}", lifetime_ident);
+            todo!()
+          }
 
           tilc_lexer::TokenKind::Semicolon => Semicolon,
           tilc_lexer::TokenKind::Colon => Colon,

@@ -4,16 +4,18 @@ members = [
   "compiler/tilc",
   "compiler/tilc_advanced_lexer",
   "compiler/tilc_ast",
+  "compiler/tilc_ast_lowering",
   "compiler/tilc_backend",
   "compiler/tilc_backend_llvm",
   "compiler/tilc_data_structures",
-  "compiler/tilc_errors",
+  "compiler/tilc_errors", "compiler/tilc_hir",
   "compiler/tilc_index",
   "compiler/tilc_interface",
   "compiler/tilc_lexer",
+  "compiler/tilc_llvm",
   "compiler/tilc_log",
   "compiler/tilc_macros",
-  "compiler/tilc_macros_tests",
+  "compiler/tilc_macros_tests", "compiler/tilc_middle",
   "compiler/tilc_parse",
   "compiler/tilc_parser",
   "compiler/tilc_session",
@@ -30,6 +32,7 @@ rustflags = ["-Z", "threads=8"]
 # Internal packages
 tilc_advanced_lexer = { path = "compiler/tilc_advanced_lexer" }
 tilc_ast = { path = "compiler/tilc_ast" }
+tilc_ast_lowering = { path = "compiler/tilc_ast_lowering" }
 tilc_backend = { path = "compiler/tilc_backend" }
 tilc_backend_llvm = { path = "compiler/tilc_backend_llvm" }
 tilc_data_structures = { path = "compiler/tilc_data_structures" }

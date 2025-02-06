@@ -1,0 +1,11 @@
+[package]
+edition = "2021"
+name = "tilc_llvm"
+version = "0.1.0"
+
+[dependencies]
+llvm-sys = { version = "191" }
+
+
+# [target.x86_64-pc-windows-msvc]
+# rustflags = ["-C", "link-args=/NODEFAULTLIB:LIBCMT /DEFAULTLIB:msvcrt"]

@@ -45,14 +45,8 @@ pub fn lex_token_stream<'psess, 'src>(
   start_pos: BytePos,
 ) -> Result<TokenStream, ErrorGuaranteed> {
   let lexer: Lexer = Lexer::new(src);
-  let token_reader: TokenReader = TokenReader::new(
-    src,
-    lexer,
-    parse_session,
-    start_pos,
-    start_pos,
-    ModuleIdx::new(0), // FIXME: idk deal with it somehow
-  );
+  let token_reader: TokenReader =
+    TokenReader::new(src, lexer, parse_session, start_pos, start_pos);
 
   let (stream, err): (TokenStream, Result<(), ErrorGuaranteed>) =
     lex_all_token_trees(token_reader);
