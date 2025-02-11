@@ -1,3 +1,4 @@
+mod def_id;
 mod edition;
 mod file_loader;
 mod interner;
@@ -10,6 +11,7 @@ mod span;
 mod symbol;
 
 
+pub use def_id::*;
 pub use edition::*;
 pub use file_loader::*;
 pub use interner::*;

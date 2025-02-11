@@ -1,16 +1,12 @@
 use tilc_index::uidx;
 
-use crate::BytePos;
+use crate::{BytePos, LocalDefIdx};
 
 
 uidx! {
   #[derive(Clone, Copy)]
   #[derive(PartialEq)]
   pub struct SpanContext;
-
-  #[derive(Clone, Copy)]
-  #[derive(PartialEq)]
-  pub struct LocalDefIdx;
 }
 
 
