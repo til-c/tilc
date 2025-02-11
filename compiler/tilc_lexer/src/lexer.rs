@@ -199,7 +199,7 @@ impl<'a> Lexer<'a> {
   }
   fn char_literal_or_lifetime(&mut self) -> TokenKind {
     let mut is_char_literal: bool = false;
-    while !is_whitespace(self.peek()) {
+    while !is_whitespace(self.peek()) || self.peek() == ' ' {
       if self.peek() == '\'' {
         is_char_literal = true;
       };
@@ -210,6 +210,7 @@ impl<'a> Lexer<'a> {
       };
     }
 
+    println!("{}", self.as_str());
     if is_char_literal {
       return TokenKind::Literal {
         kind: LiteralKind::Char,
@@ -217,6 +218,32 @@ impl<'a> Lexer<'a> {
       };
     } else {
       return TokenKind::Lifetime;
+    };
+  }
+
+  fn terminated_string(&mut self) -> bool {
+    loop {
+      match self.step() {
+        '\"' => return true,
+        '\\' if self.peek() == '\"' => {
+          self.step();
+        }
+        '\0' => return false,
+
+        _ => {}
+      };
+    }
+  }
+  /// Assumes previous char is '"'
+  fn string_literal(&mut self) -> TokenKind {
+    let terminated = self.terminated_string();
+    if !terminated {
+      panic!();
+    }
+
+    return TokenKind::Literal {
+      kind: LiteralKind::Str,
+      suffix_pos: self.current_token_len() as u32,
     };
   }
 
@@ -261,6 +288,8 @@ impl<'a> Lexer<'a> {
       }
 
       '\'' => self.char_literal_or_lifetime(),
+
+      '\"' => self.string_literal(),
 
       ';' => Semicolon,
       ':' => Colon,

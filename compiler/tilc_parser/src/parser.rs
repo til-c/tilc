@@ -1,5 +1,5 @@
 use tilc_ast::{Delim, Spacing, Token, TokenCursor, TokenKind, TokenStream};
-use tilc_errors::{DiagCtxt, DiagCtxtHandle};
+use tilc_errors::DiagCtxtHandle;
 use tilc_session::ParseSession;
 use tilc_span::Symbol;
 

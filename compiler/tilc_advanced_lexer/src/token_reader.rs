@@ -51,8 +51,8 @@ impl<'psess, 'lex> TokenReader<'psess, 'lex> {
             with_whitespace = true;
             continue;
           }
-          tilc_lexer::TokenKind::LineComment => todo!(),
-          tilc_lexer::TokenKind::BlockComment => todo!(),
+          tilc_lexer::TokenKind::LineComment => continue,
+          tilc_lexer::TokenKind::BlockComment => continue,
 
           tilc_lexer::TokenKind::Identifier => self.identifier(start),
           tilc_lexer::TokenKind::RawIdentifier => todo!(),
@@ -164,6 +164,13 @@ impl<'psess, 'lex> TokenReader<'psess, 'lex> {
           panic!("Unsopported base {} for float number", base);
         };
 
+
+        (kind, self.symbol_from_to(start, suffix_pos))
+      }
+
+      tilc_lexer::LiteralKind::Str => {
+        let kind = tilc_ast::LiteralKind::Str;
+        // todo!("{}", self.str_from_to(start, suffix_pos));
 
         (kind, self.symbol_from_to(start, suffix_pos))
       }
