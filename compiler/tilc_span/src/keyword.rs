@@ -8,7 +8,7 @@ symbols! {
   Keywords {
     // Abstract : "",
     As: "sekildi",
-    // Async: "",
+    Async: "autqy", // NOTE: TEMPORARY, but I like this one
     // Auto: "",
     // Await: "",
     // Become: "",
@@ -54,7 +54,7 @@ symbols! {
     // Static: "",
     // StaticLifetime: "",
     Struct: "qurylym", // zat/qurylym??
-    // Super: "",
+    Super: "super", // NOTE: TEMPORARY
     Trait: "qasiet",
     True: "durys",
     // Try: "",
