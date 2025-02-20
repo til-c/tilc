@@ -90,24 +90,18 @@ impl<'a> DiagCtxtHandle<'a> {
     return self.inner.borrow_mut().emit_diagnostic(diagnostic);
   }
 
-  pub fn struct_warning(self, message: String) -> Diag<'a, WarningGuaranteed> {
+  pub fn struct_warning(self, message: String) -> Diag<'a> {
     return Diag::new(self, Level::Warning, message);
   }
-  pub fn emit_warning(
-    self,
-    message: String,
-  ) -> <WarningGuaranteed as EmissionGuarantee>::EmissionResult {
+  pub fn create_warning(self, diagnostic: impl Diagnostic<'a>) -> Diag<'a> {
+    return diagnostic.into_diag(self, Level::Warning);
+  }
+  pub fn emit_warning(self, message: String) {
     self.struct_warning(message).emit();
   }
 
   pub fn struct_error(self, message: String) -> Diag<'a> {
     return Diag::new(self, Level::Error, message);
-  }
-  pub fn error(
-    self,
-    message: String,
-  ) -> <ErrorGuaranteed as EmissionGuarantee>::EmissionResult {
-    return self.struct_error(message).emit();
   }
   pub fn create_error(self, diagnostic: impl Diagnostic<'a>) -> Diag<'a> {
     return diagnostic.into_diag(self, Level::Error);
@@ -119,7 +113,7 @@ impl<'a> DiagCtxtHandle<'a> {
   pub fn struct_falal(self, message: String) -> Diag<'a, FatalAbort> {
     return Diag::new(self, Level::Fatal, message);
   }
-  pub fn fatal(
+  pub fn emit_fatal(
     self,
     message: String,
   ) -> <FatalAbort as EmissionGuarantee>::EmissionResult {
@@ -131,6 +125,7 @@ impl<'a> DiagCtxtHandle<'a> {
 }
 
 
+#[derive(Debug)]
 pub enum Level {
   /// Just some additional info
   Note,
@@ -145,6 +140,7 @@ pub enum Level {
   Fatal,
 }
 
+#[derive(Debug)]
 pub struct DiagInner {
   pub level: Level,
   pub message: String,
@@ -245,14 +241,14 @@ impl EmissionGuarantee for FatalAbort {
 }
 
 
-pub struct WarningGuaranteed;
-impl EmissionGuarantee for WarningGuaranteed {
-  type EmissionResult = ();
+// pub struct WarningGuaranteed;
+// impl EmissionGuarantee for WarningGuaranteed {
+//   type EmissionResult = ();
 
-  fn emit_guarantee(diag: Diag<'_, Self>) -> Self::EmissionResult {
-    return diag.emit_nothing();
-  }
-}
+//   fn emit_guarantee(diag: Diag<'_, Self>) -> Self::EmissionResult {
+//     return diag.emit_nothing();
+//   }
+// }
 
 impl EmissionGuarantee for () {
   type EmissionResult = ();
