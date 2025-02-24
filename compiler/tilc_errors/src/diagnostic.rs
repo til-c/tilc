@@ -1,5 +1,6 @@
 use std::{
   cell::RefCell,
+  fmt::{Debug, Display},
   marker::PhantomData,
   ops::{Deref, DerefMut},
 };
@@ -40,6 +41,8 @@ impl DiagCtxtInner {
     };
 
     let is_error: bool = diagnostic.is_error();
+    println!("{:#?}", self);
+    println!("{:#?}", diagnostic);
 
 
     if is_error {
@@ -170,6 +173,7 @@ impl DiagInner {
     self.span = span;
   }
 }
+#[derive(Debug)]
 pub struct Diag<'a, E: EmissionGuarantee = ErrorGuaranteed> {
   pub dcx: DiagCtxtHandle<'a>,
   diag: Option<Box<DiagInner>>,
@@ -231,6 +235,7 @@ impl EmissionGuarantee for ErrorGuaranteed {
 }
 
 
+#[derive(Debug)]
 pub struct FatalAbort;
 impl EmissionGuarantee for FatalAbort {
   type EmissionResult = (); // !

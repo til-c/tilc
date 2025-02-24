@@ -61,6 +61,7 @@ symbols! {
     Type: "tur",
     // Typeof: "",
     UnderscoreLifetime: "'_",
+    Underscore: "_",
     // Union: "",
     // Unsafe: "Qauipti",
     // Unsized: "sheksiz",

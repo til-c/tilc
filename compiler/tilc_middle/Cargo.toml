@@ -3,4 +3,11 @@ name = "tilc_middle"
 version = "0.1.0"
 edition = "2021"
 
+
 [dependencies]
+# Internal crates
+tilc_ast = { workspace = true }
+tilc_interface = { workspace = true }
+tilc_parse = { workspace = true }
+tilc_session = { workspace = true }
+tilc_span = { workspace = true }
