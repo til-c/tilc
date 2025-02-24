@@ -1,5 +1,4 @@
 [workspace]
-default-members = ["compiler/tilc"]
 members = [
   "compiler/tilc",
   "compiler/tilc_advanced_lexer",
@@ -8,14 +7,17 @@ members = [
   "compiler/tilc_backend",
   "compiler/tilc_backend_llvm",
   "compiler/tilc_data_structures",
-  "compiler/tilc_errors", "compiler/tilc_hir",
+  "compiler/tilc_errors",
+  "compiler/tilc_hir",
   "compiler/tilc_index",
   "compiler/tilc_interface",
+  "compiler/tilc_ir_ty",
   "compiler/tilc_lexer",
   "compiler/tilc_llvm",
   "compiler/tilc_log",
   "compiler/tilc_macros",
-  "compiler/tilc_macros_tests", "compiler/tilc_middle",
+  "compiler/tilc_macros_tests",
+  "compiler/tilc_middle",
   "compiler/tilc_parse",
   "compiler/tilc_parser",
   "compiler/tilc_session",
@@ -41,6 +43,7 @@ tilc_index = { path = "compiler/tilc_index" }
 tilc_interface = { path = "compiler/tilc_interface" }
 tilc_lexer = { path = "compiler/tilc_lexer" }
 tilc_macros = { path = "compiler/tilc_macros" }
+tilc_middle = { path = "compiler/tilc_middle" }
 tilc_parse = { path = "compiler/tilc_parse" }
 tilc_parser = { path = "compiler/tilc_parser" }
 tilc_session = { path = "compiler/tilc_session" }
