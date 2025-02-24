@@ -130,6 +130,11 @@ pub enum TokenKind {
   /// End of line
   Eof,
 }
+impl AsRef<Self> for TokenKind {
+  fn as_ref(&self) -> &Self {
+    return &self;
+  }
+}
 
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -214,9 +219,12 @@ impl Token {
       _ => None,
     };
   }
-  pub fn is_kw(&self, kw: Symbol) -> bool {
-    return match self.kind {
-      TokenKind::Identifier(name, raw) if raw == false && name == kw => true,
+  pub fn is_kw<S: AsRef<Symbol>>(&self, kw: S) -> bool {
+    let kw = kw.as_ref();
+    return match &self.kind {
+      &TokenKind::Identifier(ref name, raw) if raw == false && name == kw => {
+        true
+      }
       _ => false,
     };
   }

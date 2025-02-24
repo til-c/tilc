@@ -25,7 +25,7 @@ pub enum VisibilityKind {
   /// Sandyq specific (configurable)
   ///
   /// barsh(sandyq::alma ishinde)
-  Protected(()),
+  Protected(Box<Path>),
 }
 #[derive(Debug)]
 pub struct Attribute {
@@ -41,12 +41,20 @@ pub struct Item<K = ItemKind> {
   pub visibility: Visibility,
 
   pub kind: K,
-  // pub tokens: Option<Vec<u32>>,
 }
 pub type ItemInfo = (Identifier, ItemKind);
 
 #[derive(Debug)]
-pub struct Path {}
+pub struct Path {
+  pub segments: Vec<PathSegment>,
+  pub span: Span,
+}
+#[derive(Debug)]
+pub struct PathSegment {
+  pub ident: Identifier,
+  pub idx: NodeIdx,
+}
+
 
 #[derive(Debug)]
 pub struct Const {
@@ -78,7 +86,7 @@ pub enum TyKind {
   /// Reference type
   ///
   /// [`&'a T`], [`&'a auspaly T`], [`&T`], [`&auspaly T`]
-  Ref(Option<Lifetime>, MutTy),
+  Ref(Option<Box<Lifetime>>, Box<MutTy>),
 
   // TODO:
   /// Pointer type
@@ -87,7 +95,7 @@ pub enum TyKind {
   /// Fixed array size
   ///
   /// [b8; 2]
-  Array(Box<Ty>, Const),
+  Array(Box<Ty>, Box<Const>),
 
   /// Non fixed array size
   ///
@@ -97,13 +105,13 @@ pub enum TyKind {
   /// Tuple
   ///
   /// (b8, b16, b32)
-  Tuple(Vec<Box<Ty>>),
+  Tuple(Vec<Ty>),
 
   /// ```til
   /// qurylum Alma {};
   /// ```
   /// Alma
-  Path(Path),
+  Path(Box<Path>),
 }
 #[derive(Debug)]
 pub struct Ty {
@@ -157,10 +165,10 @@ pub struct Expression {
 }
 #[derive(Debug)]
 pub enum StatementKind {
-  Let(Local),
-  Item(Item),
-  Expression(Expression),
-  Semi(Expression),
+  Let(Box<Local>),
+  Item(Box<Item>),
+  Expression(Box<Expression>),
+  Semi(Box<Expression>),
 }
 #[derive(Debug)]
 pub struct Statement {
@@ -181,19 +189,20 @@ pub struct Block {
 pub struct Param {
   pub idx: NodeIdx,
 
-  pub ty: Ty,
+  pub ty: Box<Ty>,
   pub span: Span,
 }
 #[derive(Debug)]
 pub enum FnReturnType {
   Default,
-  Other(Ty),
+  Other(Box<Ty>),
 }
 
 
 #[derive(Debug)]
 pub struct FnHeader {
   pub is_const: bool,
+  pub is_async: bool,
   // TODO: Implement async and extern features
 }
 #[derive(Debug)]
@@ -214,10 +223,23 @@ pub struct Fn {
   pub block: Option<Block>,
 }
 #[derive(Debug)]
-pub enum ItemKind {
-  Fn(Fn),
+pub enum UseKind {
+  Single(Identifier),
+  Multiple(Vec<Identifier>),
 
-  Use(),
+  Everything,
+}
+#[derive(Debug)]
+pub struct Use {
+  pub path: Box<Path>,
+  pub kind: UseKind,
+  pub span: Span,
+}
+#[derive(Debug)]
+pub enum ItemKind {
+  Fn(Box<Fn>),
+
+  Use(Box<Use>),
 
   Const(),
   Static(),

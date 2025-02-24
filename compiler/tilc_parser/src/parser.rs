@@ -3,7 +3,7 @@ use tilc_errors::{Diag, DiagCtxtHandle, PResult};
 use tilc_session::ParseSession;
 use tilc_span::Symbol;
 
-use crate::ExpectedToken;
+use crate::UnexpectedToken;
 
 
 #[derive(Debug)]
@@ -60,7 +60,7 @@ impl<'a> Parser<'a> {
     self.prev_token = std::mem::replace(&mut self.token, token);
     self.token_spacing = spacing;
   }
-  pub(crate) fn step_if(&mut self, check: &TokenKind) -> bool {
+  pub(crate) fn step_if<T: AsRef<TokenKind>>(&mut self, check: T) -> bool {
     if self.check(check) {
       self.step();
       return true;
@@ -69,36 +69,44 @@ impl<'a> Parser<'a> {
     return false;
   }
 
-  pub(crate) fn check(&self, token_kind: &TokenKind) -> bool {
-    return self.token.kind == *token_kind;
+  pub(crate) fn check<T: AsRef<TokenKind>>(&self, token_kind: T) -> bool {
+    return self.token.kind == *token_kind.as_ref();
   }
-  pub(crate) fn check_kw(&self, kw: Symbol) -> bool {
+  pub(crate) fn check_kw<S: AsRef<Symbol>>(&self, kw: S) -> bool {
     return self.token.is_kw(kw);
   }
-  pub(crate) fn check_kw_ahead(&self, n: usize, kw: Symbol) -> bool {
+  pub(crate) fn check_kw_ahead<S: AsRef<Symbol>>(
+    &self,
+    n: usize,
+    kw: S,
+  ) -> bool {
     let nth_token: Token = self.look_ahead(n);
     return nth_token.is_kw(kw);
   }
 
-  pub(crate) fn expect(
+  pub(crate) fn expect<T: AsRef<TokenKind>>(
     &mut self,
-    token_kind: &TokenKind,
+    token_kind: T,
   ) -> PResult<'a, Token> {
+    let token_kind: &TokenKind = token_kind.as_ref();
+
     if self.check(token_kind) {
       self.step();
       return Ok(self.token);
     } else {
-      let diag: Diag<'a> = self.dcx().create_error(ExpectedToken {
+      let diag: Diag<'a> = self.dcx().create_error(UnexpectedToken {
         expected_token_kind: *token_kind,
         current_token: self.token,
       });
       return Err(diag);
     };
   }
-  pub(crate) fn expect_any_of(
+  pub(crate) fn expect_any_of<T: AsRef<[TokenKind]>>(
     &mut self,
-    expectations: &[TokenKind],
+    expectations: T,
   ) -> PResult<'a, Token> {
+    let expectations: &[TokenKind] = expectations.as_ref();
+
     if expectations.contains(&self.token.kind) {
       self.step();
       return Ok(self.prev_token);
@@ -107,7 +115,7 @@ impl<'a> Parser<'a> {
     };
   }
 
-  pub(crate) fn eat(&mut self, token_kind: &TokenKind) -> bool {
+  pub(crate) fn eat<T: AsRef<TokenKind>>(&mut self, token_kind: T) -> bool {
     if self.check(token_kind) {
       self.step();
       return true;
@@ -115,7 +123,7 @@ impl<'a> Parser<'a> {
 
     return false;
   }
-  pub(crate) fn eat_kw(&mut self, kw: Symbol) -> bool {
+  pub(crate) fn eat_kw<S: AsRef<Symbol>>(&mut self, kw: S) -> bool {
     if self.check_kw(kw) {
       self.step();
       return true;
@@ -123,14 +131,6 @@ impl<'a> Parser<'a> {
 
     return false;
   }
-  pub(crate) fn eat_token_kind(&mut self, token_kind: TokenKind) -> bool {
-    if self.token.kind == token_kind {
-      self.step();
-      return true;
-    };
-    return false;
-  }
-
 
   pub(crate) fn look_ahead(&self, n: usize) -> Token {
     let mut token_cursor: TokenCursor = self.token_cursor.clone();

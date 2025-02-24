@@ -118,7 +118,7 @@ impl TokenTree {
   }
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Spacing {
   Whitespaced,
   Sticked,
