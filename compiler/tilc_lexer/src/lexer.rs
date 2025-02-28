@@ -313,6 +313,7 @@ impl<'a> Lexer<'a> {
       '+' => Plus,
       '&' => And,
       '|' => Or,
+      '*' => Star,
       '^' => Caret,
       '%' => Percent,
 
