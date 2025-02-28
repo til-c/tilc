@@ -29,11 +29,14 @@ impl Span {
 
 
   pub fn new(
-    lo: BytePos,
-    hi: BytePos,
+    mut lo: BytePos,
+    mut hi: BytePos,
     ctxt: SpanContext,
     parent: Option<LocalDefIdx>,
   ) -> Self {
+    if hi < lo {
+      std::mem::swap(&mut lo, &mut hi);
+    };
     debug_assert!(lo <= hi);
 
 

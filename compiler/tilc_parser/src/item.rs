@@ -1,17 +1,17 @@
-use crate::Parser;
+use crate::{Parser, PathStyle, UnexpectedToken};
 
 use tilc_ast::{
-  Block, Delim, Fn, FnDecl, FnHeader, FnReturnType, FnSig, Generics, Item,
-  ItemInfo, ItemKind, NodeIdx, Param, Path, Sandyq, Statement, TokenKind, Ty,
-  TyKind, Use, UseKind, Visibility, VisibilityKind,
+  BinOp, Block, Delim, Fn, FnDecl, FnHeader, FnReturnType, FnSig, Generics,
+  Item, ItemInfo, ItemKind, NodeIdx, Param, Path, Sandyq, Statement, TokenKind,
+  Ty, TyKind, Use, UseKind, Visibility, VisibilityKind,
 };
-use tilc_errors::PResult;
+use tilc_errors::{Diagnostic, Level, PResult};
 use tilc_span::{kw, Identifier, Span, Symbol};
 
 
 impl<'a> Parser<'a> {
   pub fn parse_sandyq(&mut self) -> PResult<'a, Sandyq> {
-    let items: Vec<Item> = self.parse_until(&TokenKind::Eof)?;
+    let items: Vec<Item> = self.parse_until(TokenKind::Eof)?;
 
     return Ok(Sandyq {
       idx: NodeIdx::EMPTY,
@@ -21,9 +21,9 @@ impl<'a> Parser<'a> {
       items,
     });
   }
-  pub(crate) fn parse_until(
+  pub(crate) fn parse_until<T: AsRef<TokenKind>>(
     &mut self,
-    stopper: &TokenKind,
+    stopper: T,
   ) -> PResult<'a, Vec<Item>> {
     let mut items: Vec<Item> = Vec::new();
 
@@ -77,7 +77,7 @@ impl<'a> Parser<'a> {
     };
 
     let item_info: ItemInfo = if self.eat_kw(kw::Use) {
-      self.parse_use_item(start_span)?
+      self.parse_use_item()?
     } else if self.check_for_fn_item() {
       self.parse_fn_item(start_span)?
     } else {
@@ -87,11 +87,10 @@ impl<'a> Parser<'a> {
     return Ok(Some(item_info));
   }
   pub(crate) fn parse_item(&mut self) -> PResult<'a, Option<Item>> {
-    let start_span: Span = self.token.span;
+    let lo: Span = self.token.span;
     let vis: Visibility = self.parse_visibility()?;
 
-    let Some((ident, kind)): Option<ItemInfo> =
-      self.parse_item_info(start_span)?
+    let Some((ident, kind)): Option<ItemInfo> = self.parse_item_info(lo)?
     else {
       return Ok(None);
     };
@@ -99,7 +98,7 @@ impl<'a> Parser<'a> {
     return Ok(Some(Item {
       idx: NodeIdx::EMPTY,
       ident,
-      span: start_span.to(self.token.span),
+      span: lo.to(self.prev_token.span),
       kind,
       visibility: vis,
     }));
@@ -109,7 +108,14 @@ impl<'a> Parser<'a> {
   pub(crate) fn parse_ident(&mut self) -> PResult<'a, Identifier> {
     let (ident, raw): (Identifier, bool) = match self.token.ident() {
       Some((ident, raw)) => (ident, raw),
-      _ => todo!(),
+      None => {
+        dbg!("{:#?}", self.token);
+        let diag = UnexpectedToken {
+          current_token: self.token,
+          expected_token_kind: TokenKind::Identifier(Symbol::EMPTY, false),
+        };
+        return Err(diag.into_diag(self.dcx(), Level::Error));
+      }
     };
     if !raw && ident.is_reserved() {
       todo!();
@@ -119,29 +125,59 @@ impl<'a> Parser<'a> {
     return Ok(ident);
   }
 
-  pub(crate) fn parse_use_item(
-    &mut self,
-    start_span: Span,
-  ) -> PResult<'a, ItemInfo> {
+  pub(crate) fn parse_use_item(&mut self) -> PResult<'a, ItemInfo> {
     debug_assert!(self.prev_token.is_kw(kw::Use));
+    let use_path: Use = self.parse_use_path()?;
+    self.expect(TokenKind::Semicolon)?;
 
-    // let span: Span = self.token.span;
-    let path: Box<Path> = self.parse_path(true)?;
-    let ident = path
-      .segments
-      .last()
-      .and_then(|p| Some(p.ident))
-      .unwrap_or_else(|| Identifier::EMPTY);
 
-    // todo!("{:#?}", self.prev_token.span);
-    return Ok((
-      ident,
-      ItemKind::Use(Box::new(Use {
-        path,
-        span: start_span.to(self.prev_token.span.shrink_to_hi()),
-        kind: UseKind::Single(ident),
-      })),
-    ));
+    return Ok((Identifier::EMPTY, ItemKind::Use(Box::new(use_path))));
+    // debug_assert!(self.prev_token.is_kw(kw::Use));
+    //
+    // let lo: Span = self.token.span;
+    // let mut ident: Identifier = Identifier::EMPTY;
+    // let kind: UseKind;
+    //
+    // let path: Box<Path> = Box::new(self.parse_path()?);
+    // if self.step_if(TokenKind::BinOp(BinOp::Star)) {
+    // kind = UseKind::Everything;
+    // } else if self.step_if(TokenKind::OpenDelim(Delim::Brace)) {
+    // let mut idents: Vec<Identifier> = Vec::new();
+    // self.parse_inside_delim(
+    // Delim::Brace,
+    // TokenKind::Comma,
+    // |this: &mut Self| -> PResult<'a, ()> {
+    // idents.push(this.parse_ident()?);
+    // return Ok(());
+    // },
+    // )?;
+    // kind = UseKind::Multiple(idents);
+    // } else {
+    // ident = path.segments.last().unwrap().ident;
+    // .and_then(|p| Some(p.ident))
+    // .unwrap_or_else(|| Identifier::EMPTY);
+
+    // kind = UseKind::Single(ident);
+    // };
+
+    // if !self.step_if(TokenKind::Semicolon) {
+    //   return Err(
+    //     UnexpectedToken {
+    //       current_token: self.token,
+    //       expected_token_kind: TokenKind::Semicolon,
+    //     }
+    //     .into_diag(self.dcx(), Level::Error),
+    //   );
+    // };
+
+    // return Ok((
+    //   ident,
+    //   ItemKind::Use(Box::new(Use {
+    //     path,
+    //     span: lo.to(self.prev_token.span.shrink_to_hi()),
+    //     kind,
+    //   })),
+    // ));
   }
   pub(crate) fn parse_fn_item(
     &mut self,
@@ -185,9 +221,9 @@ impl<'a> Parser<'a> {
 
     let mut params: Vec<Param> = Vec::new();
     if !self.step_if(&TokenKind::CloseDelim(Delim::Paren)) {
-      self.parse_inside_delim(Delim::Paren, |this: &mut Self| {
-        return Ok(());
-      })?;
+      // self.parse_inside_delim(Delim::Paren, |this: &mut Self| {
+      // return Ok(());
+      // })?;
       todo!()
     };
 
@@ -196,7 +232,7 @@ impl<'a> Parser<'a> {
     return Ok(FnDecl { params, return_ty });
   }
   pub(crate) fn parse_fn_generics(&mut self) -> PResult<'a, Generics> {
-    if !self.eat(TokenKind::Lt) {
+    if !self.step_if(TokenKind::Lt) {
       return Ok(Generics {
         params: Vec::new(),
         span: self.prev_token.span.shrink_to_hi(),
@@ -206,17 +242,17 @@ impl<'a> Parser<'a> {
     todo!()
   }
   pub(crate) fn parse_fn_body(&mut self) -> PResult<'a, Option<Block>> {
-    if self.check(&TokenKind::Semicolon) {
+    if self.check(TokenKind::Semicolon) {
       return Ok(None);
     };
-    let lo_span: Span = self.token.span;
+    let lo: Span = self.token.span;
 
     // dbg!("{:#?}", self.token);
-    self.expect(&TokenKind::OpenDelim(Delim::Brace))?;
+    self.expect(TokenKind::OpenDelim(Delim::Brace))?;
 
     let mut statements: Vec<Statement> = Vec::new();
-    while !self.eat(&TokenKind::CloseDelim(Delim::Brace)) {
-      if self.check(&TokenKind::Eof) {
+    while !self.step_if(TokenKind::CloseDelim(Delim::Brace)) {
+      if self.check(TokenKind::Eof) {
         break;
       };
 
@@ -234,7 +270,7 @@ impl<'a> Parser<'a> {
       idx: NodeIdx::EMPTY,
 
       statements,
-      span: lo_span.to(self.prev_token.span),
+      span: lo.to(self.prev_token.span),
     }));
   }
   pub(crate) fn parse_fn_return_ty(&mut self) -> PResult<'a, FnReturnType> {
@@ -254,17 +290,16 @@ impl<'a> Parser<'a> {
 
 
   pub(crate) fn parse_ty(&mut self) -> PResult<'a, Box<Ty>> {
-    let mut span: Span = self.token.span;
+    let mut lo: Span = self.token.span;
 
-    let ty_kind: TyKind = if self.eat(TokenKind::Not) {
-      span = span.to(self.prev_token.span);
+    let ty_kind: TyKind = if self.step_if(TokenKind::Not) {
       TyKind::Never
     } else if self.eat_kw(kw::Underscore) {
-      span = span.to(self.prev_token.span);
       TyKind::Infer
     } else if let Some((..)) = self.token.ident() {
-      let path: Box<Path> = self.parse_path(false)?;
-      TyKind::Path(path)
+      todo!()
+      // let path: Box<Path> = Box::new(self.parse_path()?);
+      // TyKind::Path(path)
     } else {
       todo!()
     };
@@ -272,7 +307,7 @@ impl<'a> Parser<'a> {
     return Ok(Box::new(Ty {
       idx: NodeIdx::EMPTY,
       kind: ty_kind,
-      span: span.to(self.prev_token.span),
+      span: lo.to(self.prev_token.span),
     }));
   }
 
@@ -280,16 +315,39 @@ impl<'a> Parser<'a> {
   pub(crate) fn parse_inside_delim<T, F: FnMut(&mut Self) -> PResult<'a, T>>(
     &mut self,
     delim: Delim,
+    separotor: impl AsRef<TokenKind>,
     mut f: F,
   ) -> PResult<'a, T> {
     debug_assert_eq!(self.prev_token.kind, TokenKind::OpenDelim(delim));
-    let res: PResult<'a, T> = f(self);
+    return loop {
+      let res: PResult<'a, T> = f(self);
 
-    self.expect(TokenKind::CloseDelim(delim))?;
-    return res;
+      if !self.step_if(&separotor) {
+        if self.step_if(TokenKind::CloseDelim(delim)) {
+          break res;
+        };
+
+        return Err(self.expect(&separotor).unwrap_err());
+      };
+      // let maybe_end = self.expect(&separotor);
+      // if maybe_end.is_err() && self.step_if(TokenKind::CloseDelim(delim)) {
+      // break res;
+      // };
+      // {PathBuf, Path}
+
+      // if let Err(err) = self.expect(&separotor) {
+      // if !self.step_if(TokenKind::CloseDelim(delim)) {
+      // break Err(err);
+      // };
+      // };
+
+      // if self.step_if(TokenKind::CloseDelim(delim)) {
+      // break res;
+      // };
+    };
   }
   pub(crate) fn parse_statement(&mut self) -> PResult<'a, Option<Statement>> {
-    println!("{:#?}", self.token_cursor);
+    dbg!("{:#?}", &self.token_cursor);
 
     Ok(None)
   }

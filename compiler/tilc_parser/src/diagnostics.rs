@@ -8,7 +8,7 @@ pub struct UnexpectedToken {
 impl<'a> Diagnostic<'a> for UnexpectedToken {
   fn into_diag(self, dcx: DiagCtxtHandle<'a>, level: Level) -> Diag<'a> {
     let message: String = format!(
-      "Unexpected token: {{ {:?} }} Expected token kind: {{ {:?} }}",
+      "Unexpected token: {:#?}\nExpected token kind: {:#?}",
       self.current_token, self.expected_token_kind
     );
     let mut diag: Diag = Diag::new(dcx, level, message);

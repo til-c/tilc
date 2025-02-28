@@ -41,8 +41,6 @@ impl DiagCtxtInner {
     };
 
     let is_error: bool = diagnostic.is_error();
-    println!("{:#?}", self);
-    println!("{:#?}", diagnostic);
 
 
     if is_error {

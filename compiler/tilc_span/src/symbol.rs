@@ -12,6 +12,8 @@ uidx! {
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Symbol(pub SymbolIdx);
 impl Symbol {
+  pub const EMPTY: Self = Self(SymbolIdx::EMPTY);
+
   pub const fn new(idx: u32) -> Self {
     return Self(SymbolIdx(idx));
   }
@@ -57,5 +59,8 @@ impl Identifier {
 
   pub fn is_reserved(&self) -> bool {
     return self.symbol.is_reserved();
+  }
+  pub fn is_path_segment_ident(&self) -> bool {
+    return matches!(self.symbol, kw::Crate | kw::Super | kw::SelfValue);
   }
 }

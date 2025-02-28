@@ -70,7 +70,7 @@ impl<'a> Parser<'a> {
   }
 
   pub(crate) fn check<T: AsRef<TokenKind>>(&self, token_kind: T) -> bool {
-    return self.token.kind == *token_kind.as_ref();
+    return &self.token.kind == token_kind.as_ref();
   }
   pub(crate) fn check_kw<S: AsRef<Symbol>>(&self, kw: S) -> bool {
     return self.token.is_kw(kw);
@@ -101,6 +101,19 @@ impl<'a> Parser<'a> {
       return Err(diag);
     };
   }
+  pub(crate) fn expect_kw<S: AsRef<Symbol>>(
+    &mut self,
+    kw: S,
+  ) -> PResult<'a, Token> {
+    if self.check_kw(kw) {
+      self.step();
+      return Ok(self.prev_token);
+    } else {
+      todo!()
+    };
+  }
+
+
   pub(crate) fn expect_any_of<T: AsRef<[TokenKind]>>(
     &mut self,
     expectations: T,
@@ -115,14 +128,6 @@ impl<'a> Parser<'a> {
     };
   }
 
-  pub(crate) fn eat<T: AsRef<TokenKind>>(&mut self, token_kind: T) -> bool {
-    if self.check(token_kind) {
-      self.step();
-      return true;
-    };
-
-    return false;
-  }
   pub(crate) fn eat_kw<S: AsRef<Symbol>>(&mut self, kw: S) -> bool {
     if self.check_kw(kw) {
       self.step();
@@ -141,5 +146,13 @@ impl<'a> Parser<'a> {
     }
 
     return token;
+  }
+  pub(crate) fn look_ahead_and<R, F: FnOnce(Token) -> R>(
+    &self,
+    n: usize,
+    f: F,
+  ) -> R {
+    let token: Token = self.look_ahead(n);
+    return f(token);
   }
 }
