@@ -224,14 +224,14 @@ pub struct Fn {
 }
 #[derive(Debug)]
 pub enum UseKind {
-  Single(Identifier),
-  Multiple(Vec<Identifier>),
+  Single(Option<Identifier>),
+  Multiple(Vec<UseKind>),
 
   Everything,
 }
 #[derive(Debug)]
 pub struct Use {
-  pub path: Box<Path>,
+  pub prefix: Box<Path>,
   pub kind: UseKind,
   pub span: Span,
 }

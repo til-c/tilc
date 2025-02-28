@@ -115,9 +115,9 @@ pub enum TokenKind {
   And,
   /// '|'
   Or,
-  // /// '*'
+  /// '*'
   // Star,
-  // /// '/'
+  /// '/'
   // Slash,
   /// '^'
   Caret,
