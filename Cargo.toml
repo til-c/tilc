@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+tilc_interface = { workspace = true }
 
 
 [[bin]]
@@ -11,7 +12,10 @@ name = "tilc"
 
 
 [workspace]
-members = []
+members = ["compiler/tilc_errors", "compiler/tilc_interface"]
 resolver = "2"
 
 [workspace.dependencies]
+# Internal crates
+tilc_errors = { path = "compiler/tilc_errors" }
+tilc_interface = { path = "compiler/tilc_interface" }
