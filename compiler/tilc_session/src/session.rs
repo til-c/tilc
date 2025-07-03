@@ -12,14 +12,14 @@ pub enum Input {
 }
 #[derive(Debug)]
 pub struct CompilerIO {
-  input: Input,
+  pub input: Input,
 
-  output_dir: PathBuf,
-  output_file: PathBuf,
+  pub output_dir: PathBuf,
+  pub output_file: PathBuf,
 }
 
 #[derive(Debug)]
 pub struct Session {
-  io: CompilerIO,
-  parse_session: ParseSession,
+  pub io: CompilerIO,
+  pub parse_session: ParseSession,
 }
