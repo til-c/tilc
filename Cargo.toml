@@ -12,10 +12,15 @@ name = "tilc"
 
 
 [workspace]
-members = ["compiler/tilc_errors", "compiler/tilc_interface"]
+members = [
+  "compiler/tilc_errors",
+  "compiler/tilc_interface",
+  "compiler/tilc_span",
+]
 resolver = "2"
 
 [workspace.dependencies]
 # Internal crates
 tilc_errors = { path = "compiler/tilc_errors" }
 tilc_interface = { path = "compiler/tilc_interface" }
+tilc_span = { path = "compiler/tilc_span" }
