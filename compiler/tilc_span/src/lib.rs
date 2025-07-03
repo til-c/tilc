@@ -1,8 +1,10 @@
 mod edition;
 mod pos;
+mod source_map;
 
 pub use edition::*;
 pub use pos::*;
+pub use source_map::*;
 
 use std::path::PathBuf;
 
