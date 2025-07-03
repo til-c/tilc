@@ -1,8 +1,10 @@
+mod def_id;
 mod edition;
 mod pos;
 mod session;
 mod source_map;
 
+pub use def_id::*;
 pub use edition::*;
 pub use pos::*;
 pub use session::*;
@@ -29,7 +31,7 @@ impl ErrorGuaranteed {
 }
 
 
-#[derive(Debug)]
+#[derive(Debug, Hash)]
 pub enum RealFileName {
   Local(PathBuf),
   Remapped {
@@ -37,7 +39,7 @@ pub enum RealFileName {
     virtual_path: PathBuf,
   },
 }
-#[derive(Debug)]
+#[derive(Debug, Hash)]
 pub enum FileName {
   Real(RealFileName),
   // TODO: make Hash struct for simple u64 hashing
