@@ -1,3 +1,7 @@
+mod pos;
+
+pub use pos::*;
+
 use std::path::PathBuf;
 
 #[derive(Debug, Clone, Copy)]
