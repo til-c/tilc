@@ -23,6 +23,7 @@ resolver = "2"
 
 [workspace.dependencies]
 # Internal crates
+tilc_data_structure = { path = "compiler/tilc_data_structure" }
 tilc_error = { path = "compiler/tilc_error" }
 tilc_interface = { path = "compiler/tilc_interface" }
 tilc_session = { path = "compiler/tilc_session" }
