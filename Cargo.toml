@@ -16,6 +16,7 @@ members = [
   "compiler/tilc_data_structure",
   "compiler/tilc_error",
   "compiler/tilc_interface",
+  "compiler/tilc_macro",
   "compiler/tilc_session",
   "compiler/tilc_span",
 ]
@@ -26,5 +27,11 @@ resolver = "2"
 tilc_data_structure = { path = "compiler/tilc_data_structure" }
 tilc_error = { path = "compiler/tilc_error" }
 tilc_interface = { path = "compiler/tilc_interface" }
+tilc_macro = { path = "compiler/tilc_macro" }
 tilc_session = { path = "compiler/tilc_session" }
 tilc_span = { path = "compiler/tilc_span" }
+
+# External packages
+proc-macro2 = { version = "1.0.95" }
+quote = { version = "1.0.40" }
+syn = { version = "2.0.104", features = ["full", "extra-traits"] }
