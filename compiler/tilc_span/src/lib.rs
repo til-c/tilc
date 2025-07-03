@@ -3,12 +3,14 @@ mod edition;
 mod pos;
 mod session;
 mod source_map;
+mod symbol;
 
 pub use def_id::*;
 pub use edition::*;
 pub use pos::*;
 pub use session::*;
 pub use source_map::*;
+pub use symbol::*;
 
 use std::path::PathBuf;
 

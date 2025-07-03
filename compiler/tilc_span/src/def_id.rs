@@ -2,11 +2,13 @@ use std::hash::{DefaultHasher, Hash, Hasher};
 
 use tilc_data_structure::Hash64;
 
+use crate::Symbol;
+
 
 #[derive(Debug, Hash)]
 pub struct SandyqId(Hash64);
 impl SandyqId {
-  pub fn new(crate_name: String, is_exe: bool) -> Self {
+  pub fn new(crate_name: Symbol, is_exe: bool) -> Self {
     let mut hasher = DefaultHasher::new();
 
     crate_name.hash(&mut hasher);
