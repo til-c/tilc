@@ -24,5 +24,5 @@ resolver = "2"
 # Internal crates
 tilc_errors = { path = "compiler/tilc_errors" }
 tilc_interface = { path = "compiler/tilc_interface" }
-tilc_session = { path = "compiler/session" }
+tilc_session = { path = "compiler/tilc_session" }
 tilc_span = { path = "compiler/tilc_span" }
