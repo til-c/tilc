@@ -1,12 +1,24 @@
 mod edition;
 mod pos;
+mod session;
 mod source_map;
 
 pub use edition::*;
 pub use pos::*;
+pub use session::*;
 pub use source_map::*;
 
 use std::path::PathBuf;
+
+
+thread_local! {
+  pub static SESSION_GLOBALS: SessionGlobals = SessionGlobals::new();
+}
+pub fn with_session_globals<R, F>(f: F) -> R
+where
+  F: FnOnce(&SessionGlobals) -> R, {
+  return SESSION_GLOBALS.with(f);
+}
 
 #[derive(Debug, Clone, Copy)]
 pub struct ErrorGuaranteed(());
