@@ -7,6 +7,7 @@ use std::{
 pub type UnHashMap<K, V> = HashMap<K, V, BuildHasherDefault<Unhasher>>;
 pub type UnHashSet<V> = HashSet<V, BuildHasherDefault<Unhasher>>;
 
+#[derive(Default)]
 pub struct Unhasher {
   value: u64,
 }
