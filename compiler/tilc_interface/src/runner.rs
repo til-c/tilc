@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use tilc_errors::FatalError;
+use tilc_error::FatalError;
 use tilc_session::{CompilerIO, Input, ParseSession, Session};
 use tilc_span::with_session_globals;
 

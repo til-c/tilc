@@ -1,6 +1,6 @@
 use std::panic;
 
-use tilc_errors::FatalError;
+use tilc_error::FatalError;
 
 
 pub fn catch_if_error<F, R>(f: F) -> Result<R, FatalError>
