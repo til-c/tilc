@@ -72,6 +72,8 @@ impl Parse for Uidx {
         #(#consts)*
         #vis const MAX: Self = Self::from_u32(#max);
 
+        #vis const EMPTY: Self = Self::from_u32(0);
+
 
         #[inline]
         #vis const fn from_u16(v: u16) -> Self {
