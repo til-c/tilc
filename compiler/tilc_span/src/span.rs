@@ -4,7 +4,7 @@ use crate::{BytePos, LocalDefIdx, Pos};
 
 
 uidx! {
-  #[derive(Debug)]
+  #[derive(Debug, PartialEq)]
   pub struct SpanContext {}
 }
 
@@ -48,6 +48,21 @@ impl Span {
       ctxt: SpanContext::from_u16(self.ctxt_or_parent),
       parent: None,
     };
+  }
+  pub fn to(self, end: Self) -> Self {
+    let self_data: SpanData = self.data();
+    let end_data: SpanData = end.data();
+    if self_data.ctxt != end_data.ctxt {
+      todo!();
+    };
+    let parent: Option<LocalDefIdx> = if self_data.parent == end_data.parent {
+      self_data.parent
+    } else {
+      None
+    };
+
+
+    return Self::new(self_data.lo, end_data.hi, self_data.ctxt, parent);
   }
   pub fn with_lo(self, lo: BytePos) -> Self {
     return self.data().with_lo(lo);
