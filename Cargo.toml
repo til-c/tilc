@@ -13,6 +13,7 @@ name = "tilc"
 
 [workspace]
 members = [
+  "compiler/tilc_advanced_lexer",
   "compiler/tilc_ast",
   "compiler/tilc_data_structure",
   "compiler/tilc_error",
@@ -26,6 +27,7 @@ resolver = "2"
 
 [workspace.dependencies]
 # Internal crates
+tilc_advanced_lexer = { path = "compiler/tilc_advanced_lexer" }
 tilc_ast = { path = "compiler/tilc_ast" }
 tilc_data_structure = { path = "compiler/tilc_data_structure" }
 tilc_error = { path = "compiler/tilc_error" }
