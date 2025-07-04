@@ -1,6 +1,6 @@
 use tilc_macro::uidx;
 
-use crate::{Span, sym, with_session_globals};
+use crate::{Span, kw, sym, with_session_globals};
 
 
 uidx! {
@@ -26,6 +26,10 @@ impl Symbol {
       return session_globals.symbol_interner.intern(string);
     });
   }
+
+  pub fn is_reserved(self) -> bool {
+    return self >= kw::As && self <= kw::Use;
+  }
 }
 
 #[derive(Debug, Clone)]
@@ -39,5 +43,12 @@ impl Ident {
 
   pub const fn new(name: Symbol, span: Span) -> Self {
     return Self { name, span };
+  }
+
+  pub fn is_reserved(&self) -> bool {
+    return self.name.is_reserved();
+  }
+  pub fn is_path_segment_ident(&self) -> bool {
+    return matches!(self.name, kw::Crate | /* kw::Super | */ kw::SelfValue);
   }
 }

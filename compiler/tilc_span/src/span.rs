@@ -4,7 +4,7 @@ use crate::{BytePos, LocalDefIdx, Pos};
 
 
 uidx! {
-  #[derive(Debug, PartialEq)]
+  #[derive(Debug, Clone, Copy, PartialEq)]
   pub struct SpanContext {
     const ROOT = 0;
   }
@@ -51,6 +51,7 @@ impl Span {
       parent: None,
     };
   }
+
   pub fn to(self, end: Self) -> Self {
     let self_data: SpanData = self.data();
     let end_data: SpanData = end.data();
@@ -72,6 +73,15 @@ impl Span {
   pub fn with_hi(self, hi: BytePos) -> Self {
     return self.data().with_hi(hi);
   }
+
+  pub fn shrink_to_lo(self) -> Self {
+    let data = self.data();
+    return data.with_hi(data.lo);
+  }
+  pub fn shrink_to_hi(self) -> Self {
+    let data: SpanData = self.data();
+    return data.with_lo(data.hi);
+  }
 }
 pub struct TSpan {
   lo: u32,
@@ -89,7 +99,7 @@ impl TSpan {
 }
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct SpanData {
   lo: BytePos,
   hi: BytePos,
