@@ -5,7 +5,9 @@ use crate::{BytePos, LocalDefIdx, Pos};
 
 uidx! {
   #[derive(Debug, PartialEq)]
-  pub struct SpanContext {}
+  pub struct SpanContext {
+    const ROOT = 0;
+  }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
