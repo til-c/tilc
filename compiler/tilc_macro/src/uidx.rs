@@ -53,7 +53,7 @@ impl Parse for Uidx {
       body.parse::<Token![const]>()?;
       let const_name: Ident = body.parse()?;
       body.parse::<Token![=]>()?;
-      let const_value: Ident = body.parse()?;
+      let const_value: Expr = body.parse()?;
       body.parse::<Token![;]>()?;
       consts.push(quote! {
         #(#const_attrs)*
