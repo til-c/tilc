@@ -3,8 +3,8 @@ use tilc_span::{Ident, Span, Symbol};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Token {
-  kind: TokenKind,
-  span: Span,
+  pub kind: TokenKind,
+  pub span: Span,
 }
 impl Token {
   pub const DUMMY: Self = Self::new(TokenKind::Question, Span::EMPTY);
@@ -152,9 +152,9 @@ pub enum TokenKind {
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Lit {
-  kind: LitKind,
-  symbol: Symbol,
-  suffix: Option<Symbol>,
+  pub kind: LitKind,
+  pub symbol: Symbol,
+  pub suffix: Option<Symbol>,
 }
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum LitKind {
