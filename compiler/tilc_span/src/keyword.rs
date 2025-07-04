@@ -34,5 +34,7 @@ symbols! {
 
   Symbols {
     Main: "basty",
+
+    dummy: "<dummy>",
   }
 }
