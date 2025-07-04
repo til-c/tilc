@@ -10,4 +10,5 @@ tilc_error = { workspace = true }
 tilc_macro = { workspace = true }
 
 # External packages
+indexmap = { workspace = true }
 parking_lot = { workspace = true }
