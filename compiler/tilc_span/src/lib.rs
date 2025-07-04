@@ -1,6 +1,7 @@
 mod def_id;
 mod edition;
 mod interner;
+mod keyword;
 mod pos;
 mod session;
 mod source_map;
@@ -9,6 +10,7 @@ mod symbol;
 pub use def_id::*;
 pub use edition::*;
 pub use interner::*;
+pub use keyword::*;
 pub use pos::*;
 pub use session::*;
 pub use source_map::*;

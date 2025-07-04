@@ -12,7 +12,7 @@ impl SessionGlobals {
   pub fn new() -> Self {
     return Self {
       // TODO: Create prefill function for keywords
-      symbol_interner: Interner::new(),
+      symbol_interner: Interner::with_prefilled(),
 
       source_map: Some(Rc::new(SourceMap {
         files: Default::default(),
