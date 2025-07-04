@@ -8,7 +8,6 @@ use std::{
 use parking_lot::RwLock;
 
 use tilc_data_structure::{Hash64, UnHashMap};
-use tilc_error::FatalError;
 
 use crate::{BytePos, FileName, Pos, SandyqId};
 
@@ -41,7 +40,7 @@ impl SourceMap {
     return match self.try_new_source_file(filename, source) {
       Ok(source_file) => source_file,
 
-      Err(TooLargeFileError) => FatalError::raise(),
+      Err(TooLargeFileError) => panic!(),
     };
   }
   fn try_new_source_file(
