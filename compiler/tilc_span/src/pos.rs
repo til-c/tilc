@@ -41,6 +41,17 @@ macro_rules! impl_pos {
         return Self(self.0 - rhs.0);
       }
     }
+
+    impl std::convert::Into<$inner_ty> for $name {
+      fn into(self) -> $inner_ty {
+        return self.0 as $inner_ty;
+      }
+    }
+    impl std::convert::From<$inner_ty> for $name {
+      fn from(value: $inner_ty) -> Self {
+        return Self(value);
+      }
+    }
   )*};
 }
 
@@ -54,5 +65,5 @@ pub trait Pos {
 
 impl_pos! {
   #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-  pub struct BytePos(u32);
+  pub struct BytePos(pub u32);
 }
