@@ -5,6 +5,7 @@ mod keyword;
 mod pos;
 mod session;
 mod source_map;
+mod span;
 mod symbol;
 
 pub use def_id::*;
@@ -14,6 +15,7 @@ pub use keyword::*;
 pub use pos::*;
 pub use session::*;
 pub use source_map::*;
+pub use span::*;
 pub use symbol::*;
 
 use std::path::PathBuf;

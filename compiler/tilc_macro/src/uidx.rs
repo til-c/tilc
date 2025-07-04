@@ -72,6 +72,14 @@ impl Parse for Uidx {
       impl #name {
         #vis const MAX: Self = Self::from_u32(#max);
 
+
+        #[inline]
+        #vis const fn from_u16(v: u16) -> Self {
+          assert!(v as u32 <= #max);
+          unsafe {
+            return Self::from_u32_unchecked(v as u32);
+          };
+        }
         #[inline]
         #vis const fn from_u32(v: u32) -> Self {
           assert!(v <= #max);
@@ -88,6 +96,10 @@ impl Parse for Uidx {
         }
 
 
+        #[inline]
+        #vis const fn as_u16(self) -> u16 {
+          return self.0 as u16;
+        }
         #[inline]
         #vis const fn as_u32(self) -> u32 {
           return self.0;
