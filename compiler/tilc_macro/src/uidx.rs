@@ -68,8 +68,8 @@ impl Parse for Uidx {
       #(#attrs)*
       #vis struct #name(u32);
 
-      #(#consts)*
       impl #name {
+        #(#consts)*
         #vis const MAX: Self = Self::from_u32(#max);
 
 
