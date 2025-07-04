@@ -6,4 +6,8 @@ edition = "2024"
 [dependencies]
 # Internal crates
 tilc_data_structure = { workspace = true }
+tilc_error = { workspace = true }
 tilc_macro = { workspace = true }
+
+# External packages
+parking_lot = { workspace = true }

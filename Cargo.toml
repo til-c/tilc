@@ -32,6 +32,7 @@ tilc_session = { path = "compiler/tilc_session" }
 tilc_span = { path = "compiler/tilc_span" }
 
 # External packages
+parking_lot = { version = "0.12.4" }
 proc-macro2 = { version = "1.0.95" }
 quote = { version = "1.0.40" }
 syn = { version = "2.0.104", features = ["full", "extra-traits"] }
