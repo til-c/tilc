@@ -5,4 +5,5 @@ edition = "2024"
 
 [dependencies]
 # Internal crates
+tilc_macro = { workspace = true }
 tilc_span = { workspace = true }

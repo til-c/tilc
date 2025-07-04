@@ -1,7 +1,7 @@
 use tilc_span::{Ident, Span, Symbol};
 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Token {
   pub kind: TokenKind,
   pub span: Span,
