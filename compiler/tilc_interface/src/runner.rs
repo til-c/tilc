@@ -18,7 +18,7 @@ impl<'a> Runner<'a> {
 
   /// Main entry point
   pub fn run(&self) -> Result<()> {
-    let input: Input = Input::File(match self.args.get(0) {
+    let input = Input::File(match self.args.get(0) {
       Some(path) => PathBuf::from(path),
 
       None => FatalError::raise(),
