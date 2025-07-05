@@ -4,7 +4,7 @@ use tilc_ast::{
   Delim, DelimSpacing, DelimSpan, Spacing, Token, TokenKind, TokenStream,
   TokenTree,
 };
-use tilc_span::{ErrorGuaranteed, Span};
+use tilc_span::ErrorGuaranteed;
 
 
 pub(crate) struct TokenTreesReader<'psess, 'lex> {
@@ -26,10 +26,10 @@ impl<'psess, 'lex> TokenTreesReader<'psess, 'lex> {
   ) -> (Spacing, TokenStream, Result<(), ErrorGuaranteed>) {
     // First step call for settings self.token
     // Nothing to glue for the first call so glue param is false
-    let (spacing, _): (Spacing, Token) = self.step(false);
+    let (spacing, _) = self.step(false);
 
 
-    let mut buffer: Vec<TokenTree> = Vec::new();
+    let mut buffer = Vec::new();
     loop {
       match self.token.kind {
         // TODO: Check for from_delim, return err in case from_delim is true
@@ -54,7 +54,7 @@ impl<'psess, 'lex> TokenTreesReader<'psess, 'lex> {
         }
 
         _ => {
-          let (following_spacing, token): (Spacing, Token) = self.step(true);
+          let (following_spacing, token) = self.step(true);
           buffer.push(TokenTree::Token(token, following_spacing));
         }
       }
@@ -65,22 +65,18 @@ impl<'psess, 'lex> TokenTreesReader<'psess, 'lex> {
     &mut self,
     opening_delim: Delim,
   ) -> Result<TokenTree, ErrorGuaranteed> {
-    let delim_start_span: Span = self.token.span;
-    let (spacing, token_stream, err): (
-      Spacing,
-      TokenStream,
-      Result<(), ErrorGuaranteed>,
-    ) = self.lex_token_trees(true);
+    let delim_start_span = self.token.span;
+    let (spacing, token_stream, err) = self.lex_token_trees(true);
     if let Err(_) = err {
       todo!("Error handling is not implemented yet");
     };
 
 
-    let delim_span: DelimSpan = DelimSpan {
+    let delim_span = DelimSpan {
       start: delim_start_span,
       end: self.token.span,
     };
-    let close_spacing: Spacing = match self.token.kind {
+    let close_spacing = match self.token.kind {
       // Case when closing and opening delims match
       // If delims match just step one token forward
       TokenKind::CloseDelim(delim) if delim == opening_delim => {
@@ -98,7 +94,7 @@ impl<'psess, 'lex> TokenTreesReader<'psess, 'lex> {
       ),
     };
 
-    let delim_spacing: DelimSpacing = DelimSpacing {
+    let delim_spacing = DelimSpacing {
       start: spacing,
       end: close_spacing,
     };
@@ -111,9 +107,8 @@ impl<'psess, 'lex> TokenTreesReader<'psess, 'lex> {
   }
 
   fn step(&mut self, glue: bool) -> (Spacing, Token) {
-    let (spacing, next_token): (Spacing, Token) = loop {
-      let (next_token, is_whitespaced): (Token, bool) =
-        self.token_reader.next_token();
+    let (spacing, next_token) = loop {
+      let (next_token, is_whitespaced) = self.token_reader.next_token();
 
       if is_whitespaced {
         break (Spacing::Whitespaced, next_token);
@@ -134,7 +129,7 @@ impl<'psess, 'lex> TokenTreesReader<'psess, 'lex> {
     };
 
 
-    let current_token: Token = std::mem::replace(&mut self.token, next_token);
+    let current_token = std::mem::replace(&mut self.token, next_token);
     return (spacing, current_token);
   }
 }
