@@ -1,0 +1,9 @@
+[package]
+name = "tilc_middle"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# Internal crates
+tilc_session = { workspace = true }
+tilc_span = { workspace = true }

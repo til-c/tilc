@@ -20,6 +20,7 @@ members = [
   "compiler/tilc_interface",
   "compiler/tilc_lexer",
   "compiler/tilc_macro",
+  "compiler/tilc_middle",
   "compiler/tilc_parse",
   "compiler/tilc_parser",
   "compiler/tilc_session",
