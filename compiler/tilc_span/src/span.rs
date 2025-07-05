@@ -30,10 +30,10 @@ impl Span {
     ctxt: SpanContext,
     parent: Option<LocalDefIdx>,
   ) -> Self {
-    if lo > hi {
+    if hi < lo {
       std::mem::swap(&mut lo, &mut hi);
     };
-    debug_assert!(lo < hi);
+    debug_assert!(lo <= hi);
     let len = (hi - lo).0 as u16;
 
     match parent {
