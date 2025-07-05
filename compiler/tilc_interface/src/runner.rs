@@ -4,7 +4,7 @@ use tilc_error::FatalError;
 use tilc_session::{CompilerIO, Input, ParseSession, Session};
 use tilc_span::with_session_globals;
 
-use crate::Result;
+use crate::{Result, compiler::Compiler};
 
 
 pub struct Runner<'a> {
@@ -36,6 +36,11 @@ impl<'a> Runner<'a> {
       },
       parse_session,
     };
+    let compiler = Compiler { session };
+
+
+    let sandyq = crate::parse(&compiler.session)?;
+    dbg!(&sandyq);
 
 
     return Ok(());
