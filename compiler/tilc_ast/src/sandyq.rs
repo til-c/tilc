@@ -28,7 +28,7 @@ pub enum ItemKind {
 pub struct Sandyq {
   pub idx: NodeIdx,
 
-  items: Vec<Item>,
+  pub items: Vec<Item>,
 
   pub span: Span,
 }
