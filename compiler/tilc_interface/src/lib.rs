@@ -1,4 +1,5 @@
 mod interface;
+mod passes;
 mod runner;
 mod util;
 
