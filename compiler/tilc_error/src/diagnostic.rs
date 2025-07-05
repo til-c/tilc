@@ -23,6 +23,9 @@ impl<'a, E: EmissionGuarantee> Diag<'a, E> {
       marker: PhantomData,
     };
   }
+  pub fn emit(self) -> E::EmissionResult {
+    return E::emit_guarantee(self);
+  }
 
   fn take_diag(&mut self) -> DiagInner {
     return *self.diag.take().unwrap();
