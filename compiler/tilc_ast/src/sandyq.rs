@@ -1,12 +1,12 @@
 use tilc_macro::uidx;
 use tilc_span::{Ident, Span};
 
+
 uidx! {
   #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
   pub struct NodeIdx {}
 }
 pub const SANDYQ_NODE_IDX: NodeIdx = NodeIdx::from_u32(0);
-
 
 #[derive(Debug)]
 pub struct Item<K = ItemKind> {
