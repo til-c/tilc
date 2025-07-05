@@ -10,7 +10,7 @@ pub struct ParseSession {
   pub edition: Edition,
   pub symbol_repo: SymbolRepo,
 
-  source_map: Rc<SourceMap>,
+  pub source_map: Rc<SourceMap>,
 }
 impl ParseSession {
   pub fn new(source_map: Rc<SourceMap>) -> Self {
