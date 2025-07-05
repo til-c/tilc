@@ -20,6 +20,7 @@ members = [
   "compiler/tilc_interface",
   "compiler/tilc_lexer",
   "compiler/tilc_macro",
+  "compiler/tilc_parser",
   "compiler/tilc_session",
   "compiler/tilc_span",
 ]
@@ -34,6 +35,7 @@ tilc_error = { path = "compiler/tilc_error" }
 tilc_interface = { path = "compiler/tilc_interface" }
 tilc_lexer = { path = "compiler/tilc_lexer" }
 tilc_macro = { path = "compiler/tilc_macro" }
+tilc_parser = { path = "compiler/tilc_parser" }
 tilc_session = { path = "compiler/tilc_session" }
 tilc_span = { path = "compiler/tilc_span" }
 
