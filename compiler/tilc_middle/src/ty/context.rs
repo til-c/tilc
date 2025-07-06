@@ -18,7 +18,7 @@ impl<'ctxt> GlobalCtxt<'ctxt> {
   }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub struct TyCtxt<'ctxt> {
   gcx: &'ctxt GlobalCtxt<'ctxt>,
 }
