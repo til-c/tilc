@@ -37,6 +37,7 @@ tilc_error = { path = "compiler/tilc_error" }
 tilc_interface = { path = "compiler/tilc_interface" }
 tilc_lexer = { path = "compiler/tilc_lexer" }
 tilc_macro = { path = "compiler/tilc_macro" }
+tilc_middle = { path = "compiler/tilc_middle" }
 tilc_parse = { path = "compiler/tilc_parse" }
 tilc_parser = { path = "compiler/tilc_parser" }
 tilc_session = { path = "compiler/tilc_session" }
