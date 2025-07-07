@@ -6,7 +6,7 @@ symbols! {
     As: "sekildi",
     Async: "autqy",
     Const: "turaqty",
-    Crate: "sandyq",
+    Sandyq: "sandyq",
     Else: "bolmasa",
     Enum: "tizbe",
     Extern: "syrtqy",
