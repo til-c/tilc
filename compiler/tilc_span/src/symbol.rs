@@ -49,6 +49,6 @@ impl Ident {
     return self.name.is_reserved();
   }
   pub fn is_path_segment_ident(&self) -> bool {
-    return matches!(self.name, kw::Crate | /* kw::Super | */ kw::SelfValue);
+    return matches!(self.name, kw::Sandyq | /* kw::Super | */ kw::SelfValue);
   }
 }
