@@ -37,11 +37,11 @@ pub struct Attribute {
   pub path: Path,
   pub args: AttrArgs,
 
-  pub style: AttrkibuteStyle,
+  pub style: AttributeStyle,
   pub span: Span,
 }
 #[derive(Debug)]
-pub enum AttrkibuteStyle {
+pub enum AttributeStyle {
   Inner,
   Outer,
 }
