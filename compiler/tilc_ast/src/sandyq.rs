@@ -3,7 +3,7 @@ use std::sync::atomic::{AtomicU32, Ordering};
 use tilc_macro::uidx;
 use tilc_span::{Ident, Span, Symbol};
 
-use crate::{Delim, DelimSpan, TokenStream};
+use crate::{DelimSpacing, DelimSpan, TokenStream};
 
 
 uidx! {
@@ -37,11 +37,11 @@ pub struct Attribute {
   pub path: Path,
   pub args: AttrArgs,
 
-  pub style: AttributeStyle,
+  pub style: AttrkibuteStyle,
   pub span: Span,
 }
-#[derive(Debug, Clone, Copy)]
-pub enum AttributeStyle {
+#[derive(Debug)]
+pub enum AttrkibuteStyle {
   Inner,
   Outer,
 }
@@ -413,13 +413,22 @@ pub struct Visibility {
 #[derive(Debug)]
 pub enum VisibilityKind {
   Public,
+<<<<<<< HEAD
   Private,
   Protected(Box<Path>),
+=======
+  Private(Box<Path>),
+  Protected,
+>>>>>>> 8be0e46 (ast items)
 }
 
 #[derive(Debug)]
 pub struct DelimArgs {
+<<<<<<< HEAD
   pub delim: Delim,
+=======
+  pub spacing: DelimSpacing,
+>>>>>>> 8be0e46 (ast items)
   pub span: DelimSpan,
   pub tokens: TokenStream,
 }
@@ -441,6 +450,7 @@ pub enum Defaultness {
   Default,
   Overriden,
 }
+<<<<<<< HEAD
 
 
 #[derive(Debug)]
@@ -455,3 +465,5 @@ impl AttrIdxGen {
     return AttrIdx(next_idx);
   }
 }
+=======
+>>>>>>> 8be0e46 (ast items)
