@@ -99,7 +99,7 @@ impl<'psess, 'lex> TokenReader<'psess, 'lex> {
           tilc_lexer::TokenKind::Question => Question,
           tilc_lexer::TokenKind::Dollar => Dollar,
           tilc_lexer::TokenKind::Eq => Eq,
-          tilc_lexer::TokenKind::Bang => Not,
+          tilc_lexer::TokenKind::Bang => Bang,
           tilc_lexer::TokenKind::Lt => Lt,
           tilc_lexer::TokenKind::Gt => Gt,
           tilc_lexer::TokenKind::Minus => BinOp(tilc_ast::BinOp::Minus),

@@ -2,6 +2,7 @@ use std::rc::Rc;
 
 use indexmap::IndexMap;
 use parking_lot::RwLock;
+use tilc_ast::AttrIdxGen;
 use tilc_span::{Edition, SourceMap, Span, Symbol};
 
 
@@ -11,6 +12,8 @@ pub struct ParseSession {
   pub symbol_repo: SymbolRepo,
 
   pub source_map: Rc<SourceMap>,
+
+  pub attr_idx_gen: AttrIdxGen,
 }
 impl ParseSession {
   pub fn new(source_map: Rc<SourceMap>) -> Self {
@@ -19,6 +22,8 @@ impl ParseSession {
       symbol_repo: SymbolRepo::default(),
 
       source_map,
+
+      attr_idx_gen: AttrIdxGen::new(),
     };
   }
 }

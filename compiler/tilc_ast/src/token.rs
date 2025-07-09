@@ -102,7 +102,7 @@ pub enum TokenKind {
   /// "||"
   OrOr,
   /// '!'
-  Not,
+  Bang,
   /// "!="
   NotEq,
 
