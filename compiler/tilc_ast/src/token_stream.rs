@@ -62,10 +62,10 @@ impl TokenCursor {
             Token::new(TokenKind::CloseDelim(delim), span.end),
             spacing.end,
           );
-        }
+        };
       } else {
         return (Token::new(TokenKind::Eof, Span::EMPTY), Spacing::Sticked);
-      }
+      };
     }
   }
 }
