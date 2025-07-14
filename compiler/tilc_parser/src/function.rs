@@ -25,7 +25,7 @@ impl<'a> Parser<'a> {
     self.expect(TokenKind::OpenDelim(Delim::Paren))?;
 
     let mut params = Vec::new();
-    if !self.step_if(TokenKind::CloseDelim(Delim::Paren)) {
+    if !self.eat(TokenKind::CloseDelim(Delim::Paren)) {
       // self.parse_inside_delim(Delim::Paren, |this: &mut Self| {
       // return Ok(());
       // })?;
@@ -37,7 +37,7 @@ impl<'a> Parser<'a> {
     return Ok(FnDecl { params, return_ty });
   }
   pub(crate) fn parse_fn_generics(&mut self) -> PResult<'a, Generics> {
-    if !self.step_if(TokenKind::Lt) {
+    if !self.eat(TokenKind::Lt) {
       return Ok(Generics {
         params: Vec::new(),
         span: self.prev_token.span.shrink_to_hi(),
@@ -52,11 +52,10 @@ impl<'a> Parser<'a> {
     };
     let lo = self.token.span;
 
-    // dbg!("{:#?}", self.token);
     self.expect(TokenKind::OpenDelim(Delim::Brace))?;
 
     let mut statements = Vec::new();
-    while !self.step_if(TokenKind::CloseDelim(Delim::Brace)) {
+    while !self.eat(TokenKind::CloseDelim(Delim::Brace)) {
       if self.check(TokenKind::Eof) {
         break;
       };
@@ -72,14 +71,14 @@ impl<'a> Parser<'a> {
     }
 
     return Ok(Some(Block {
-      idx: NodeIdx::EMPTY,
+      idx: NodeIdx::DUMMY,
 
       statements,
       span: lo.to(self.prev_token.span),
     }));
   }
   pub(crate) fn parse_fn_return_ty(&mut self) -> PResult<'a, FnReturnType> {
-    if !self.step_if(TokenKind::RArrow) {
+    if !self.eat(TokenKind::RArrow) {
       return Ok(FnReturnType::Default);
     };
 

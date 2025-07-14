@@ -1,6 +1,6 @@
 use tilc_ast::{
-  Delim, Fn, FnSig, Item, ItemKind, NodeIdx, Sandyq, Statement, TokenKind, Ty,
-  TyKind, Visibility, VisibilityKind,
+  Delim, Fn, FnSig, Item, ItemKind, NodeIdx, Sandyq, TokenKind, Ty, TyKind,
+  Visibility, VisibilityKind,
 };
 use tilc_error::PResult;
 use tilc_span::{Ident, Span, Symbol, kw};
@@ -10,11 +10,12 @@ use crate::{ItemInfo, Parser};
 
 impl<'a> Parser<'a> {
   pub fn parse_sandyq(&mut self) -> PResult<'a, Sandyq> {
-    let (items, span) = self.parse_until(TokenKind::Eof)?;
+    let (items, attrs, span) = self.parse_until(TokenKind::Eof)?;
 
     return Ok(Sandyq {
-      idx: NodeIdx::EMPTY,
+      idx: NodeIdx::DUMMY,
 
+      attrs,
       items,
 
       span,
@@ -29,11 +30,14 @@ impl<'a> Parser<'a> {
     };
 
     return Ok(Some(Item {
-      idx: NodeIdx::EMPTY,
-      ident,
-      span: lo.to(self.prev_token.span),
-      kind,
+      idx: NodeIdx::DUMMY,
+
+      attrs: Vec::new(),
       vis,
+      kind,
+      ident,
+
+      span: lo.to(self.prev_token.span),
     }));
   }
   fn parse_item_info(
@@ -101,7 +105,7 @@ impl<'a> Parser<'a> {
       });
     };
 
-    if self.step_if(TokenKind::OpenDelim(Delim::Paren)) {
+    if self.eat(TokenKind::OpenDelim(Delim::Paren)) {
       todo!();
     };
 
@@ -113,27 +117,21 @@ impl<'a> Parser<'a> {
   pub(crate) fn parse_ty(&mut self) -> PResult<'a, Box<Ty>> {
     let lo = self.token.span;
 
-    let ty_kind = if self.step_if(TokenKind::Not) {
+    let ty_kind = if self.eat(TokenKind::Bang) {
       TyKind::Never
     } else if self.eat_kw(kw::Underscore) {
       TyKind::Infer
     } else if let Some((..)) = self.token.ident() {
-      todo!()
-      // let path: Box<Path> = Box::new(self.parse_path()?);
-      // TyKind::Path(path)
+      let path = Box::new(self.parse_path()?);
+      TyKind::Path(path)
     } else {
       todo!()
     };
 
     return Ok(Box::new(Ty {
-      idx: NodeIdx::EMPTY,
+      idx: NodeIdx::DUMMY,
       kind: ty_kind,
       span: lo.to(self.prev_token.span),
     }));
-  }
-  pub(crate) fn parse_statement(&mut self) -> PResult<'a, Option<Statement>> {
-    dbg!("{:#?}", &self.token_cursor);
-
-    Ok(None)
   }
 }
