@@ -3,7 +3,7 @@ use std::sync::atomic::{AtomicU32, Ordering};
 use tilc_macro::uidx;
 use tilc_span::{Ident, Span, Symbol};
 
-use crate::{Delim, DelimSpan, TokenStream};
+use crate::{Delim, DelimSpan, Lit, TokenStream};
 
 
 uidx! {
@@ -30,7 +30,7 @@ pub struct Sandyq {
   pub span: Span,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Attribute {
   pub idx: AttrIdx,
 
@@ -45,7 +45,7 @@ pub enum AttributeStyle {
   Inner,
   Outer,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum AttrArgs {
   Empty,
   Delimited(DelimArgs),
@@ -151,7 +151,7 @@ pub enum VariantKind {
   Unit,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct FieldDef {
   pub idx: NodeIdx,
 
@@ -211,12 +211,12 @@ pub enum Korpe {
   Braced(Vec<Item>, Span),
   File,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Path {
   pub segments: Vec<PathSegment>,
   pub span: Span,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PathSegment {
   pub ident: Ident,
   pub idx: NodeIdx,
@@ -276,14 +276,14 @@ pub enum GenericParamKind {
 }
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Ty {
   pub idx: NodeIdx,
 
   pub kind: TyKind,
   pub span: Span,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum TyKind {
   /// No-return type
   ///
@@ -339,7 +339,13 @@ pub struct Statement {
   pub idx: NodeIdx,
 
   pub kind: StatementKind,
+
   pub span: Span,
+}
+impl Statement {
+  pub fn access_attrs<F: FnMut(&mut Vec<Attribute>)>(&mut self, f: F) {
+    self.kind.access_attrs(f);
+  }
 }
 #[derive(Debug)]
 pub enum StatementKind {
@@ -348,7 +354,16 @@ pub enum StatementKind {
   Expression(Box<Expression>),
   Semi(Box<Expression>),
 }
-#[derive(Debug)]
+impl StatementKind {
+  fn access_attrs<F: FnMut(&mut Vec<Attribute>)>(&mut self, mut f: F) {
+    match self {
+      Self::Let(local) => f(&mut local.attrs),
+      Self::Item(item) => f(&mut item.attrs),
+      Self::Expression(expr) | Self::Semi(expr) => f(&mut expr.attrs),
+    };
+  }
+}
+#[derive(Debug, Clone)]
 pub struct Expression {
   pub idx: NodeIdx,
 
@@ -357,14 +372,21 @@ pub struct Expression {
 
   pub span: Span,
 }
-#[derive(Debug)]
-pub enum ExpressionKind {}
+#[derive(Debug, Clone)]
+pub enum ExpressionKind {
+  /// ainymaly $pat = $expr
+  Let(Box<Pattern>, Box<Expression>, Span),
+  /// $lit
+  Lit(Lit),
+  /// $expr = $expr
+  Assign(Box<Expression>, Span, Box<Expression>),
+}
 #[derive(Debug)]
 pub struct Local {
   pub idx: NodeIdx,
 
-  pub pat: Box<Pattern>,
   pub attrs: Vec<Attribute>,
+  pub pat: Box<Pattern>,
   pub kind: LocalKind,
   pub ty: Option<Box<Ty>>,
 
@@ -373,21 +395,28 @@ pub struct Local {
 #[derive(Debug)]
 pub enum LocalKind {
   Decl,
-  Init(Expression),
+  Init(Box<Expression>),
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Pattern {
   pub idx: NodeIdx,
 
   pub kind: PatternKind,
   pub span: Span,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum PatternKind {
+  /// $mut? $ident $pat
   Ident(Mutability, Ident, Option<Box<Pattern>>),
+
+  /// ($pat, $pat, ...)
   Tuple(Vec<Box<Pattern>>),
+
+  /// $struct {$arg, $arg, ...}
   Struct(Path, Vec<FieldDef>),
+  /// $expr
   Expression(Box<Expression>),
+  /// &$mut? $pat
   Ref(Mutability, Box<Pattern>),
 }
 
@@ -405,19 +434,19 @@ pub enum UseKind {
   Everything,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Visibility {
   pub kind: VisibilityKind,
   pub span: Span,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum VisibilityKind {
   Public,
   Private,
   Protected(Box<Path>),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct DelimArgs {
   pub delim: Delim,
   pub span: DelimSpan,
@@ -431,7 +460,7 @@ pub enum Safety {
   Unsafe(Span),
   Inherit,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Mutability {
   Mut,
   Nope,
