@@ -14,3 +14,8 @@ query! {
   }
 }
 all_queries! { define_callbacks! }
+
+
+pub(crate) fn default_query(name: &str, key: &dyn std::fmt::Debug) -> ! {
+  panic!("tcx.{}({:?}) is not defined", name, key);
+}

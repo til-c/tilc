@@ -23,7 +23,7 @@ pub struct TyCtxt<'ctxt> {
   gcx: &'ctxt GlobalCtxt<'ctxt>,
 }
 impl<'ctxt> TyCtxt<'ctxt> {
-  pub fn create_and_enter_global_ctxt<T, F: FnOnce(TyCtxt<'ctxt>) -> T>(
+  pub fn create_global_ctxt<T, F: FnOnce(TyCtxt<'ctxt>) -> T>(
     gcx_cell: &'ctxt OnceLock<GlobalCtxt<'ctxt>>,
     session: &'ctxt Session,
     sandyq_id: SandyqId,

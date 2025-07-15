@@ -7,7 +7,7 @@ use crate::query::QueryEngine;
 
 
 impl<'ctxt> TyCtxt<'ctxt> {
-  fn at(self, span: Span) -> TyCtxtAt<'ctxt> {
+  pub(crate) fn at(self, span: Span) -> TyCtxtAt<'ctxt> {
     return TyCtxtAt { tcx: self, span };
   }
 }
@@ -39,20 +39,41 @@ macro_rules! define_callbacks {
     $(#[$attrs:meta])*
     [$($modifiers:tt)*] fn $name:ident($($k:tt)*) -> $v:ty,
   )*) => {
+    use tilc_span::Span;
+
     use crate::TyCtxt;
 
-    pub mod queries {$(
-      pub mod $name {
+
+    pub mod queries {
+      pub use super::*;
+
+      $(pub mod $name {
         pub type Key<'ctxt> = $($k)*;
         pub type Value = $v;
+
+        pub type LocalKey<'ctxt> = $($k)*;
+
+        pub type ProvidedValue<'ctxt> = $v;
+      })*
+    }
+
+    #[derive(Debug, Clone, Copy)]
+      pub struct Providers {
+        $(pub $name: for<'ctxt> fn(TyCtxt<'ctxt>, queries::$name::LocalKey<'ctxt>) -> queries::$name::ProvidedValue<'ctxt>,)*
       }
-    )*}
+      impl Default for Providers {
+        fn default() -> Self {
+          return Self {
+            $($name: |_, key| $crate::query::default_query(stringify!($name), &key)),*
+          };
+        }
+      }
 
     impl<'ctxt> TyCtxt<'ctxt> {$(
       $(#[$attrs])*
       #[inline(always)]
       pub fn $name(self, key: query_helper_param_ty!($($k)*)) ->$v {
-        panic!("a");
+        return self.at(Span::EMPTY).$name(key);
       }
     )*}
     impl<'ctxt> TyCtxtAt<'ctxt> {$(
