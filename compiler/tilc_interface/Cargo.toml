@@ -7,6 +7,7 @@ edition = "2024"
 # Internal crates
 tilc_ast = { workspace = true }
 tilc_error = { workspace = true }
+tilc_middle = { workspace = true }
 tilc_parse = { workspace = true }
 tilc_session = { workspace = true }
 tilc_span = { workspace = true }
