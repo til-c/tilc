@@ -68,8 +68,9 @@ impl<'a> Parser<'a> {
     let fn_body = self.parse_fn_body()?;
 
     return Ok((
-      fn_identifier,
+      fn_identifier.clone(),
       ItemKind::Fn(Box::new(Fn {
+        ident: fn_identifier,
         fn_sig: FnSig {
           fn_header,
           fn_decl,

@@ -3,7 +3,7 @@ use std::sync::atomic::{AtomicU32, Ordering};
 use tilc_macro::uidx;
 use tilc_span::{Ident, Span, Symbol};
 
-use crate::{Delim, DelimSpan, Lit, TokenStream};
+use crate::{Delim, DelimSpan, FnCtxt, FnKind, Lit, TokenStream, WalkItemKind};
 
 
 uidx! {
@@ -225,6 +225,7 @@ pub struct PathSegment {
 #[derive(Debug, Clone)]
 pub struct Fn {
   pub generics: Generics,
+  pub ident: Ident,
   pub fn_sig: FnSig,
   pub block: Option<Block>,
 }
@@ -482,5 +483,24 @@ impl AttrIdxGen {
     let next_idx = self.0.fetch_add(1, Ordering::Relaxed);
     assert!(next_idx != u32::MAX);
     return AttrIdx(next_idx);
+  }
+}
+
+
+impl WalkItemKind for ItemKind {
+  fn mut_walk<W: crate::Walker>(
+    &mut self,
+    span: Span,
+    idx: NodeIdx,
+    vis: &mut Visibility,
+    walker: &mut W,
+  ) {
+    match self {
+      Self::Fn(fx) => {
+        let fn_kind = FnKind::Fn(FnCtxt::Free, vis, fx);
+        walker.mut_walk_fn(fn_kind);
+      }
+      _ => todo!(),
+    };
   }
 }
