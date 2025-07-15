@@ -1,3 +1,4 @@
+mod diagnostic;
 mod query;
 mod symbols;
 mod uidx;
@@ -18,4 +19,9 @@ pub fn symbols(input: TokenStream) -> TokenStream {
 #[proc_macro]
 pub fn tilc_queries(input: TokenStream) -> TokenStream {
   return query::tilc_queries(input);
+}
+
+#[proc_macro_derive(Diagnostic, attributes(diag, warning, note))]
+pub fn diagnostic(input: TokenStream) -> TokenStream {
+  return diagnostic::diagnostic(input);
 }
