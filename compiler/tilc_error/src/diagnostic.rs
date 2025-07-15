@@ -2,12 +2,13 @@ use std::{
   cell::RefCell,
   marker::PhantomData,
   ops::{Deref, DerefMut},
+  rc::Rc,
 };
 
 use tilc_span::{ErrorGuaranteed, Span};
 
-pub type PResult<'a, T> = Result<T, Diag<'a>>;
 
+pub type PResult<'a, T> = Result<T, Diag<'a>>;
 
 #[derive(Debug)]
 pub struct Diag<'a, E: EmissionGuarantee = ErrorGuaranteed> {
@@ -16,7 +17,7 @@ pub struct Diag<'a, E: EmissionGuarantee = ErrorGuaranteed> {
   marker: PhantomData<E>,
 }
 impl<'a, E: EmissionGuarantee> Diag<'a, E> {
-  pub fn new(dcx: DiagCtxtHandle<'a>, level: Level, message: String) -> Self {
+  pub fn new(dcx: DiagCtxtHandle<'a>, level: Level, message: Rc<str>) -> Self {
     return Self {
       dcx,
       diag: Some(Box::new(DiagInner::new(level, message))),
@@ -119,12 +120,12 @@ impl DiagCtxtInner {
 #[derive(Debug)]
 pub struct DiagInner {
   pub level: Level,
-  pub message: String,
+  pub message: Rc<str>,
 
   pub span: Span,
 }
 impl DiagInner {
-  pub fn new(level: Level, message: String) -> Self {
+  pub fn new(level: Level, message: Rc<str>) -> Self {
     return Self {
       level,
       message,
