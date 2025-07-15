@@ -1,3 +1,5 @@
+mod token_trees;
+
 use std::{path::Path, rc::Rc};
 
 use tilc_advanced_lexer::TokenReader;
@@ -8,8 +10,6 @@ use tilc_session::ParseSession;
 use tilc_span::{BytePos, ErrorGuaranteed, SourceFile};
 
 use crate::token_trees::TokenTreesReader;
-
-mod token_trees;
 
 
 pub fn new_parser_from_file<'psess>(
