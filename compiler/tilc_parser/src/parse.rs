@@ -1,5 +1,6 @@
 use tilc_ast::{
-  Delim, Item, ItemKind, Spacing, Token, TokenCursor, TokenKind, TokenStream,
+  Attribute, AttributeStyle, Delim, Item, ItemKind, Spacing, Token,
+  TokenCursor, TokenKind, TokenStream,
 };
 use tilc_error::PResult;
 use tilc_session::ParseSession;
@@ -9,6 +10,7 @@ use tilc_span::{Ident, Span, Symbol};
 pub(crate) type ItemInfo = (Ident, ItemKind);
 
 
+#[derive(Debug)]
 pub struct Parser<'psess> {
   pub parse_session: &'psess ParseSession,
 
@@ -57,15 +59,6 @@ impl<'a> Parser<'a> {
     self.token_spacing = spacing;
   }
 
-  pub(crate) fn step_if(&mut self, check: TokenKind) -> bool {
-    if self.check(check) {
-      self.step();
-      return true;
-    };
-
-    return false;
-  }
-
 
   pub(crate) fn check(&self, token_kind: TokenKind) -> bool {
     return self.token.kind == token_kind;
@@ -73,9 +66,22 @@ impl<'a> Parser<'a> {
   pub(crate) fn check_kw(&self, kw: Symbol) -> bool {
     return self.token.is_kw(kw);
   }
-  pub(crate) fn check_kw_ahead(&self, n: usize, kw: Symbol) -> bool {
-    let nth_token = self.look_ahead(n);
-    return nth_token.is_kw(kw);
+
+  pub(crate) fn eat(&mut self, check: TokenKind) -> bool {
+    if self.check(check) {
+      self.step();
+      return true;
+    };
+
+    return false;
+  }
+  pub(crate) fn eat_kw(&mut self, kw: Symbol) -> bool {
+    if self.check_kw(kw) {
+      self.step();
+      return true;
+    };
+
+    return false;
   }
 
   pub(crate) fn expect(&mut self, token_kind: TokenKind) -> PResult<'a, Token> {
@@ -84,21 +90,7 @@ impl<'a> Parser<'a> {
       return Ok(self.token);
     } else {
       todo!();
-      // let diag: Diag<'a> = self.dcx().create_error(UnexpectedToken {
-      //   expected_token_kind: *token_kind,
-      //   current_token: self.token,
-      // });
-      // return Err(diag);
     };
-  }
-
-  pub(crate) fn eat_kw(&mut self, kw: Symbol) -> bool {
-    if self.check_kw(kw) {
-      self.step();
-      return true;
-    };
-
-    return false;
   }
   pub(crate) fn expect_kw(&mut self, kw: Symbol) -> PResult<'a, Token> {
     if self.check_kw(kw) {
@@ -133,9 +125,10 @@ impl<'a> Parser<'a> {
   pub(crate) fn parse_until(
     &mut self,
     stopper: TokenKind,
-  ) -> PResult<'a, (Vec<Item>, Span)> {
-    let mut items = Vec::new();
+  ) -> PResult<'a, (Vec<Item>, Vec<Attribute>, Span)> {
     let lo = self.token.span;
+    let mut items = Vec::new();
+    let attrs = self.parse_attributes(AttributeStyle::Inner)?;
 
     loop {
       let Some(item): Option<Item> = self.parse_item()? else {
@@ -145,12 +138,12 @@ impl<'a> Parser<'a> {
     }
 
     let span = lo.to(self.prev_token.span);
-    if !self.step_if(stopper) {
+    if !self.eat(stopper) {
       todo!();
     };
 
 
-    return Ok((items, span));
+    return Ok((items, attrs, span));
   }
 
 

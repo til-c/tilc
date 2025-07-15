@@ -33,7 +33,7 @@ impl Token {
         Eq => Ge,
         _ => return None,
       },
-      Not => match next_token.kind {
+      Bang => match next_token.kind {
         Eq => NotEq,
         _ => return None,
       },
@@ -102,7 +102,7 @@ pub enum TokenKind {
   /// "||"
   OrOr,
   /// '!'
-  Not,
+  Bang,
   /// "!="
   NotEq,
 

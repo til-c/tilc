@@ -21,6 +21,6 @@ Cargo.lock
 #.idea/
 
 
-/tests
+/examples
 
 .DS_Store

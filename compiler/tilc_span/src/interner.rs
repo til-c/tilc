@@ -25,7 +25,7 @@ impl Interner {
     let string = string.to_string().leak();
     let (idx, is_new) = inner.strings.insert_full(string);
 
-    debug_assert!(!is_new);
+    debug_assert!(is_new);
     return Symbol::new(idx as u32);
   }
   pub(crate) fn get(&self, symbol: Symbol) -> &str {

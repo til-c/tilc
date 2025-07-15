@@ -34,12 +34,12 @@ impl<'a> Parser<'a> {
         //             ^
         //             | token's position
         self.parse_path_seq();
-        if self.step_if(TokenKind::OpenDelim(Delim::Brace)) {
+        if self.eat(TokenKind::OpenDelim(Delim::Brace)) {
           // ash std::mem::{replace, swap};
           //               ^
           //               | token's position
           todo!("parse inner use");
-        } else if self.step_if(TokenKind::BinOp(BinOp::Star)) {
+        } else if self.eat(TokenKind::BinOp(BinOp::Star)) {
           // ash std::mem::*;
           //               ^
           //               | token's position
@@ -97,7 +97,7 @@ impl<'a> Parser<'a> {
 
     return Ok(PathSegment {
       ident,
-      idx: NodeIdx::EMPTY,
+      idx: NodeIdx::DUMMY,
     });
   }
   fn parse_path_segment_ident(&mut self) -> PResult<'a, Ident> {
@@ -108,7 +108,7 @@ impl<'a> Parser<'a> {
   }
 
   fn parse_path_seq(&mut self) -> bool {
-    if self.step_if(TokenKind::Path) {
+    if self.eat(TokenKind::Path) {
       return true;
     } else if self.check(TokenKind::Colon) {
       todo!("use double colon");
