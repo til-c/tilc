@@ -37,5 +37,7 @@ symbols! {
     Main: "basty",
 
     dummy: "<dummy>",
+
+    tilc_out: "tilc_out",
   }
 }
