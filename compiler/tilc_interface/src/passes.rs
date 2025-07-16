@@ -63,7 +63,6 @@ pub(crate) fn create_and_enter_global_ctxt<
       let feed = tcx.unit_query_feed();
 
       feed.crate_for_resolving(tcx.arena.alloc(Holder::new(sandyq)));
-      // tcx.crate_for_resolving(());
 
       return f(tcx);
     },
