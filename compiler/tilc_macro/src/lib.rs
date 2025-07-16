@@ -16,6 +16,6 @@ pub fn symbols(input: TokenStream) -> TokenStream {
 }
 
 #[proc_macro]
-pub fn query(input: TokenStream) -> TokenStream {
-  return query::query(input);
+pub fn tilc_queries(input: TokenStream) -> TokenStream {
+  return query::tilc_queries(input);
 }

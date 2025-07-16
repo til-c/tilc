@@ -8,11 +8,12 @@ pub use query_system::*;
 
 use tilc_ast::Sandyq;
 use tilc_data_structure::Holder;
-use tilc_macro::query;
+use tilc_macro::tilc_queries;
+use tilc_query_system::{QueryCache, try_get_cache};
 
 
-query! {
-  query resolver_for_lowering(_: ()) -> ::std::sync::Arc<Sandyq> {
+tilc_queries! {
+  query resolver_for_lowering(_: ()) -> &'ctxt Holder<Sandyq> {
     desc { "returns resolver and sandyq" }
   }
 

@@ -20,7 +20,7 @@ uidx! {
 }
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Sandyq {
   pub idx: NodeIdx,
 
@@ -55,7 +55,7 @@ pub enum AttrArgs {
   },
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Item<K = ItemKind> {
   pub idx: NodeIdx,
 
@@ -67,7 +67,7 @@ pub struct Item<K = ItemKind> {
   pub span: Span,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum ItemKind {
   Static(Box<Static>),
   Const(Box<Const>),
@@ -84,29 +84,29 @@ pub enum ItemKind {
   MacroCall(Box<MacroCall>),
   MacroDef(Ident, MacroDef),
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum ForeignItemKind {
   Static(Box<Static>),
   Fn(Box<Fn>),
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum AssociatedItemKind {
   Const(Box<Const>),
   Fn(Box<Fn>),
   TyAlias(Box<TyAlias>),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct MacroDef {
   pub body: DelimArgs,
   pub is_macro_rules: bool,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct MacroCall {
   pub ident: Ident,
   pub args: DelimArgs,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Impl {
   pub safety: Safety,
   pub generics: Generics,
@@ -117,13 +117,13 @@ pub struct Impl {
   pub defaultness: Defaultness,
   pub span: Span,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum ImplKind {
   Positive,
   Negative(Span),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Trait {
   pub idx: NodeIdx,
 
@@ -135,7 +135,7 @@ pub struct Trait {
   pub span: Span,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct EnumVariant {
   pub idx: NodeIdx,
 
@@ -144,7 +144,7 @@ pub struct EnumVariant {
 
   pub span: Span,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum VariantKind {
   Struct(Vec<FieldDef>),
   Tuple(Vec<FieldDef>),
@@ -162,7 +162,7 @@ pub struct FieldDef {
 
   pub span: Span,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct TyAlias {
   pub vis: Visibility,
   pub ident: Ident,
@@ -171,7 +171,7 @@ pub struct TyAlias {
 
   pub defaultness: Defaultness,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Static {
   pub idx: NodeIdx,
 
@@ -183,7 +183,7 @@ pub struct Static {
   pub expr: Box<Expression>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Const {
   pub idx: NodeIdx,
 
@@ -198,7 +198,7 @@ pub struct Const {
 }
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ForeignKorpe {
   pub extern_span: Span,
 
@@ -206,7 +206,7 @@ pub struct ForeignKorpe {
   pub abi: Option<Symbol>,
   pub items: Vec<Item<ForeignItemKind>>,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Korpe {
   Braced(Vec<Item>, Span),
   File,
@@ -222,53 +222,53 @@ pub struct PathSegment {
   pub idx: NodeIdx,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Fn {
   pub generics: Generics,
   pub fn_sig: FnSig,
   pub block: Option<Block>,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct FnSig {
   pub fn_header: FnHeader,
   pub fn_decl: FnDecl,
   pub span: Span,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct FnHeader {
   pub is_const: bool,
   pub is_async: bool,
   // TODO: Implement async and extern features
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct FnDecl {
   pub params: Vec<Param>,
   pub return_ty: FnReturnType,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum FnReturnType {
   Default,
   Other(Box<Ty>),
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Param {
   pub idx: NodeIdx,
 
   pub ty: Box<Ty>,
   pub span: Span,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Generics {
   pub params: Vec<GenericParam>,
   pub span: Span,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct GenericParam {
   pub idx: NodeIdx,
   pub ident: Ident,
   pub kind: GenericParamKind,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum GenericParamKind {
   Lifetime,
   Type,
@@ -327,14 +327,14 @@ pub enum TyKind {
 }
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Block {
   pub idx: NodeIdx,
 
   pub statements: Vec<Statement>,
   pub span: Span,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Statement {
   pub idx: NodeIdx,
 
@@ -347,7 +347,7 @@ impl Statement {
     self.kind.access_attrs(f);
   }
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum StatementKind {
   Let(Box<Local>),
   Item(Box<Item>),
@@ -381,7 +381,7 @@ pub enum ExpressionKind {
   /// $expr = $expr
   Assign(Box<Expression>, Span, Box<Expression>),
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Local {
   pub idx: NodeIdx,
 
@@ -392,7 +392,7 @@ pub struct Local {
 
   pub span: Span,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum LocalKind {
   Decl,
   Init(Box<Expression>),
@@ -420,13 +420,13 @@ pub enum PatternKind {
   Ref(Mutability, Box<Pattern>),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Use {
   pub prefix: Box<Path>,
   pub kind: UseKind,
   pub span: Span,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum UseKind {
   Single(Option<Ident>),
   Multiple(Vec<UseKind>),
@@ -454,7 +454,7 @@ pub struct DelimArgs {
 }
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Safety {
   Safe(Span),
   Unsafe(Span),
@@ -465,7 +465,7 @@ pub enum Mutability {
   Mut,
   Nope,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Defaultness {
   Default,
   Overriden,

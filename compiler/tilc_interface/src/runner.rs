@@ -40,7 +40,7 @@ impl<'a> Runner<'a> {
 
 
     let sandyq = crate::parse(&compiler.session)?;
-    dbg!(&sandyq);
+    // dbg!(&sandyq);
 
 
     create_and_enter_global_ctxt(&compiler, sandyq, |tcx| {

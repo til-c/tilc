@@ -1,6 +1,18 @@
 use std::{fmt::Debug, hash::Hash, sync::OnceLock};
 
 
+pub fn try_get_cache<Cache>(
+  cache: &Cache,
+  key: &Cache::Key,
+) -> Option<Cache::Value>
+where
+  Cache: QueryCache, {
+  match cache.lookup(key) {
+    Some(value) => return Some(value),
+    None => return None,
+  };
+}
+
 pub trait QueryCache: Sized {
   type Key: Debug + Copy + Hash + Eq;
   type Value: Copy;

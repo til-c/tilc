@@ -140,7 +140,7 @@ impl<T: Parse> Parse for List<T> {
   }
 }
 
-pub(crate) fn query(input: TokenStream) -> TokenStream {
+pub(crate) fn tilc_queries(input: TokenStream) -> TokenStream {
   let queries = parse_macro_input!(input as List<Query>);
 
   let mut query_stream = quote! {};

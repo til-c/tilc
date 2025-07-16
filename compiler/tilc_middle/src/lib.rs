@@ -1,10 +1,12 @@
+mod arena;
 mod query;
 mod ty;
 
-use std::ops::{Deref, DerefMut};
-
+pub use arena::*;
 pub use query::*;
 pub use ty::*;
+
+use std::ops::{Deref, DerefMut};
 
 
 #[derive(Debug, Default, Clone, Copy)]

@@ -32,7 +32,7 @@ impl Symbol {
   }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub struct Ident {
   pub name: Symbol,
   pub span: Span,

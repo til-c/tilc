@@ -3,7 +3,7 @@ use std::{ops::Deref, sync::OnceLock};
 use tilc_session::Session;
 use tilc_span::SandyqId;
 
-use crate::QuerySystem;
+use crate::{Arena, QuerySystem};
 
 
 // TODO: deal with field visibilities
@@ -11,6 +11,7 @@ use crate::QuerySystem;
 pub struct GlobalCtxt<'ctxt> {
   pub session: &'ctxt Session,
 
+  pub arena: &'ctxt Arena,
   pub query_system: QuerySystem<'ctxt>,
 
   sandyq_id: SandyqId,
@@ -30,6 +31,7 @@ impl<'ctxt> TyCtxt<'ctxt> {
   pub fn create_global_ctxt<T, F: FnOnce(TyCtxt<'ctxt>) -> T>(
     gcx_cell: &'ctxt OnceLock<GlobalCtxt<'ctxt>>,
     session: &'ctxt Session,
+    arena: &'ctxt Arena,
     query_system: QuerySystem<'ctxt>,
     sandyq_id: SandyqId,
     f: F,
@@ -37,7 +39,10 @@ impl<'ctxt> TyCtxt<'ctxt> {
     return gcx_cell
       .get_or_init(|| GlobalCtxt {
         session,
+
+        arena,
         query_system,
+
         sandyq_id,
       })
       .enter(f);

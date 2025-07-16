@@ -1,8 +1,8 @@
-use std::sync::{Arc, OnceLock};
+use std::sync::OnceLock;
 
 use tilc_ast::Sandyq;
 use tilc_data_structure::Holder;
-use tilc_middle::{QueryCaches, QuerySystem, QuerySystemFns, TyCtxt};
+use tilc_middle::{Arena, QueryCaches, QuerySystem, QuerySystemFns, TyCtxt};
 use tilc_parse::new_parser_from_file;
 use tilc_session::{Input, Session};
 use tilc_span::{SandyqId, sym};
@@ -13,7 +13,7 @@ use crate::{DEFAULT_QUERY_PROVIDERS, Result, compiler::Compiler};
 pub(crate) fn resolver_for_lowering<'ctxt>(
   tcx: TyCtxt<'ctxt>,
   _: (),
-) -> Arc<Sandyq> {
+) -> &'ctxt Holder<Sandyq> {
   todo!("123");
 }
 
@@ -45,10 +45,13 @@ pub(crate) fn create_and_enter_global_ctxt<
 
 
   let gcx_cell = OnceLock::new();
+  let arena = Arena::default();
   let sandyq_id = SandyqId::new(sym::tilc_out, false);
+
   return TyCtxt::create_global_ctxt(
     &gcx_cell,
     session,
+    &arena,
     QuerySystem {
       fns: QuerySystemFns {
         local_providers: providers.queries,
@@ -59,7 +62,8 @@ pub(crate) fn create_and_enter_global_ctxt<
     |tcx| {
       let feed = tcx.unit_query_feed();
 
-      // feed.crate_for_resolving(Holder::new(sandyq));
+      feed.crate_for_resolving(tcx.arena.alloc(Holder::new(sandyq)));
+      // tcx.crate_for_resolving(());
 
       return f(tcx);
     },

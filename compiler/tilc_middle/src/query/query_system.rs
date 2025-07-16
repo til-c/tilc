@@ -1,10 +1,25 @@
 use std::ops::Deref;
 
+use tilc_query_system::{QueryCache, try_get_cache};
 use tilc_span::Span;
 
 use crate::{QueryCaches, TyCtxt, query::Providers};
 
 
+pub fn query_get<'ctxt, Cache>(
+  tcx: TyCtxt<'ctxt>,
+  run_query: fn(TyCtxt<'ctxt>, Cache::Key) -> Cache::Value,
+  query_cache: &Cache,
+  key: Cache::Key,
+) -> Cache::Value
+where
+  Cache: QueryCache, {
+  let key = key.into_query_param();
+  match try_get_cache(query_cache, &key) {
+    Some(value) => return value,
+    None => return run_query(tcx, key),
+  };
+}
 impl<'ctxt> TyCtxt<'ctxt> {
   pub(crate) fn at(self, span: Span) -> TyCtxtAt<'ctxt> {
     return TyCtxtAt { tcx: self, span };
@@ -98,7 +113,7 @@ macro_rules! define_callbacks {
     )*}
     impl<'ctxt> TyCtxtAt<'ctxt> {$(
       pub fn $name(self, key: query_helper_param_ty!($($k)*)) -> $v {
-        return (self.tcx.query_system.fns.local_providers.$name)(self.tcx, key);
+        return query_get(self.tcx, self.query_system.fns.local_providers.$name, &self.query_system.caches.$name, key.into_query_param());
       }
     )*}
 
@@ -124,8 +139,16 @@ macro_rules! define_queries {
         let key = self.key().into_query_param();
 
         let tcx = self.tcx;
-        // let cache = tcx.query_system.caches.$name;
-        todo!("get the cache");
+        let cache = &tcx.query_system.caches.$name;
+
+        match try_get_cache(cache, &key) {
+          Some(value) => {
+            panic!("This value: {:?} is already cached", value);
+          }
+          None => {
+            cache.compute(key, value);
+          }
+        };
       }
     }
   )*};
