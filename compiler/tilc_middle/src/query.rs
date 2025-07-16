@@ -6,15 +6,17 @@ mod keys;
 pub use keys::*;
 pub use query_system::*;
 
+use tilc_ast::Sandyq;
+use tilc_data_structure::Holder;
 use tilc_macro::query;
 
 
 query! {
-  query resolver_for_lowering(_: ()) -> ::std::sync::Arc<::tilc_ast::Sandyq> {
+  query resolver_for_lowering(_: ()) -> ::std::sync::Arc<Sandyq> {
     desc { "returns resolver and sandyq" }
   }
 
-  query crate_for_resolving((): ()) -> &'ctxt ::tilc_ast::Sandyq {
+  query crate_for_resolving((): ()) -> &'ctxt Holder<Sandyq> {
     feedable
     desc { "Sandyq before macro and name resolution" }
   }

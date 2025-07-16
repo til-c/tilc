@@ -38,3 +38,10 @@ impl<'ctxt, KEY: Copy> Feed<'ctxt, KEY> {
     return self.key;
   }
 }
+
+
+impl<'ctxt> TyCtxt<'ctxt> {
+  pub fn unit_query_feed(self) -> TyCtxtFeed<'ctxt, ()> {
+    return TyCtxtFeed { tcx: self, key: () };
+  }
+}

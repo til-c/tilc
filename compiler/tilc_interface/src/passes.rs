@@ -1,6 +1,7 @@
 use std::sync::{Arc, OnceLock};
 
 use tilc_ast::Sandyq;
+use tilc_data_structure::Holder;
 use tilc_middle::{QueryCaches, QuerySystem, QuerySystemFns, TyCtxt};
 use tilc_parse::new_parser_from_file;
 use tilc_session::{Input, Session};
@@ -55,6 +56,12 @@ pub(crate) fn create_and_enter_global_ctxt<
       caches: QueryCaches::default(),
     },
     sandyq_id,
-    f,
+    |tcx| {
+      let feed = tcx.unit_query_feed();
+
+      // feed.crate_for_resolving(Holder::new(sandyq));
+
+      return f(tcx);
+    },
   );
 }
