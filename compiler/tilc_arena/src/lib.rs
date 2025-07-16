@@ -253,7 +253,7 @@ macro_rules! define_arenas {
       $(pub $name: $crate::TypedArena<$ty>,)*
     }
     impl<'ctxt> Arena {
-      pub fn alloc<T: ArenaAllocatable<'ctxt>>(&'ctxt self, value: T) -> &mut T {
+      pub fn alloc<T: ArenaAllocatable<'ctxt>>(&'ctxt self, value: T) -> &'ctxt mut T {
         return value.allocate_on(self);
       }
     }
