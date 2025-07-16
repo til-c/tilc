@@ -48,14 +48,11 @@ impl<T> TypedArena<T> {
       if size_of::<T>() == 0 {
         self.ptr.set(self.ptr.get().wrapping_byte_add(1));
         let ptr = ptr::NonNull::<T>::dangling().as_ptr();
-        // Don't drop the object. This `write` is equivalent to `forget`.
         ptr::write(ptr, object);
         return &mut *ptr;
       } else {
         let ptr = self.ptr.get();
-        // Advance the pointer.
         self.ptr.set(self.ptr.get().add(1));
-        // Write into uninitialized memory.
         ptr::write(ptr, object);
         return &mut *ptr;
       };
@@ -63,30 +60,20 @@ impl<T> TypedArena<T> {
   }
   #[inline(never)]
   fn grow(&self, additional: usize) {
-    // We need the element size to convert chunk sizes (ranging from
-    // PAGE to HUGE_PAGE bytes) to element counts.
     let elem_size = cmp::max(1, size_of::<T>());
     let mut chunks = self.chunks.borrow_mut();
     let mut new_cap;
     if let Some(last_chunk) = chunks.last_mut() {
-      // If a type is `!needs_drop`, we don't need to keep track of how many elements
-      // the chunk stores - the field will be ignored anyway.
       if mem::needs_drop::<T>() {
-        // FIXME: this should *likely* use `offset_from`, but more
-        // investigation is needed (including running tests in miri).
         let used_bytes = self.ptr.get().addr() - last_chunk.start().addr();
         last_chunk.entries = used_bytes / size_of::<T>();
       }
 
-      // If the previous chunk's len is less than HUGE_PAGE
-      // bytes, then this chunk will be least double the previous
-      // chunk's size.
       new_cap = last_chunk.storage.len().min(HUGE_PAGE / elem_size / 2);
       new_cap *= 2;
     } else {
       new_cap = PAGE / elem_size;
     }
-    // Also ensure that this chunk can fit `additional`.
     new_cap = cmp::max(additional, new_cap);
 
     let mut chunk = ArenaChunk::<T>::new(new_cap);
@@ -139,15 +126,11 @@ impl DroplessArena {
   pub fn alloc_raw(&self, layout: Layout) -> *mut u8 {
     assert!(layout.size() != 0);
 
-    // This loop executes once or twice: if allocation fails the first
-    // time, the `grow` ensures it will succeed the second time.
     loop {
       let start = self.start.get().addr();
       let old_end = self.end.get();
       let end = old_end.addr();
 
-      // Align allocated bytes so that `self.end` stays aligned to
-      // DROPLESS_ALIGNMENT.
       let bytes = align_up(layout.size(), Self::ALIGNMENT);
 
       assert!(end == align_down(end, Self::ALIGNMENT));
@@ -156,16 +139,11 @@ impl DroplessArena {
         let new_end = align_down(sub, layout.align());
         if start <= new_end {
           let new_end = old_end.with_addr(new_end);
-          // `new_end` is aligned to DROPLESS_ALIGNMENT as `align_down`
-          // preserves alignment as both `end` and `bytes` are already
-          // aligned to DROPLESS_ALIGNMENT.
           self.end.set(new_end);
           return new_end;
         }
       }
 
-      // No free space left. Allocate a new chunk to satisfy the request.
-      // On failure the grow will panic or abort.
       self.grow(layout);
     }
   }
@@ -182,17 +160,13 @@ impl DroplessArena {
     } else {
       new_cap = PAGE;
     }
-    // Also ensure that this chunk can fit `additional`.
     new_cap = cmp::max(additional, new_cap);
 
     let mut chunk = ArenaChunk::new(align_up(new_cap, PAGE));
     self.start.set(chunk.start());
 
-    // Align the end to DROPLESS_ALIGNMENT.
     let end = align_down(chunk.end().addr(), Self::ALIGNMENT);
 
-    // Make sure we don't go past `start`. This should not happen since the allocation
-    // should be at least DROPLESS_ALIGNMENT - 1 bytes.
     debug_assert!(chunk.start().addr() <= end);
 
     self.end.set(chunk.end().with_addr(end));
