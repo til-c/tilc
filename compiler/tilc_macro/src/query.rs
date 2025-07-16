@@ -189,7 +189,15 @@ pub(crate) fn query(input: TokenStream) -> TokenStream {
         $macro! {
           #query_stream
         }
-      }
+      };
+    }
+
+    macro_rules! feedable_queries {
+      ($macro:ident!) => {
+        $macro! {
+          #feedable_queries
+        }
+      };
     }
   });
 }

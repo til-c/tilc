@@ -1,14 +1,10 @@
-use std::{path::PathBuf, sync::OnceLock};
+use std::path::PathBuf;
 
 use tilc_error::FatalError;
-use tilc_middle::TyCtxt;
 use tilc_session::{CompilerIO, Input, ParseSession, Session};
-use tilc_span::{SandyqId, sym, with_session_globals};
+use tilc_span::with_session_globals;
 
-use crate::{
-  DEFAULT_QUERY_PROVIDERS, Result, compiler::Compiler,
-  create_and_enter_global_ctxt,
-};
+use crate::{Result, compiler::Compiler, create_and_enter_global_ctxt};
 
 
 pub struct Runner<'a> {
