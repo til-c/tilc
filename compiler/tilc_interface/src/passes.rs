@@ -4,6 +4,7 @@ use tilc_ast::Sandyq;
 use tilc_data_structure::Holder;
 use tilc_middle::{Arena, QueryCaches, QuerySystem, QuerySystemFns, TyCtxt};
 use tilc_parse::new_parser_from_file;
+use tilc_resolver::Resolver;
 use tilc_session::{Input, Session};
 use tilc_span::{SandyqId, sym};
 
@@ -14,7 +15,11 @@ pub(crate) fn resolver_for_lowering<'ctxt>(
   tcx: TyCtxt<'ctxt>,
   _: (),
 ) -> &'ctxt Holder<Sandyq> {
-  todo!("123");
+  let sandyq = tcx.crate_for_resolving(()).steal();
+  let resolver = Resolver::new(tcx);
+  dbg!(&resolver);
+
+  todo!();
 }
 
 pub(crate) fn parse(session: &Session) -> Result<Sandyq> {
