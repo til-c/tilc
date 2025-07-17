@@ -18,13 +18,11 @@ pub(crate) fn resolver_for_lowering<'ctxt>(
 ) -> &'ctxt Holder<Sandyq> {
   let mut sandyq = tcx.crate_for_resolving(()).steal();
   let mut resolver = Resolver::new(tcx);
-  dbg!(&resolver);
 
   let mut expansion_ctxt = ExpansiontCtxt::new(tcx.session, &mut resolver);
   sandyq = expansion_ctxt
     .monotonic_expander(true)
     .expand_sandyq(sandyq);
-  dbg!(&sandyq);
 
   return tcx.arena.alloc(Holder::new(sandyq));
 }

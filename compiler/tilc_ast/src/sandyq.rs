@@ -444,7 +444,7 @@ pub struct Visibility {
 pub enum VisibilityKind {
   Public,
   Private,
-  Protected(Box<Path>),
+  Protected(NodeIdx, Box<Path>),
 }
 
 #[derive(Debug, Clone)]
@@ -503,4 +503,89 @@ impl WalkItemKind for ItemKind {
       _ => todo!(),
     };
   }
+}
+
+macro_rules! impl_has_attrs {
+  ($(
+    $ident:ident $(<$T:ident>)?,
+  )*) => {$(
+    impl HasAttrs for $ident $(<$T>)? {
+      fn attrs(&self) -> &[Attribute] {
+        return &self.attrs;
+      }
+      fn walk_attrs<F>(&mut self, f: F)
+      where
+        F: FnOnce(&mut Vec<Attribute>), {
+          f(&mut self.attrs);
+        }
+    })*
+  };
+}
+pub trait HasAttrs {
+  fn attrs(&self) -> &[Attribute];
+  fn walk_attrs<F>(&mut self, f: F)
+  where
+    F: FnOnce(&mut Vec<Attribute>);
+}
+impl_has_attrs! {
+  Sandyq,
+  Item,
+  Item<ForeignItemKind>,
+  Item<AssociatedItemKind>,
+  Expression,
+}
+impl HasAttrs for StatementKind {
+  fn attrs(&self) -> &[Attribute] {
+    match self {
+      Self::Let(local) => return &local.attrs,
+      Self::Item(item) => return item.attrs(),
+      Self::Expression(expr) | Self::Semi(expr) => return expr.attrs(),
+    };
+  }
+
+  fn walk_attrs<F>(&mut self, f: F)
+  where
+    F: FnOnce(&mut Vec<Attribute>), {
+    match self {
+      Self::Let(local) => return f(&mut local.attrs),
+      Self::Item(item) => return item.walk_attrs(f),
+      Self::Expression(expr) | Self::Semi(expr) => return expr.walk_attrs(f),
+    };
+  }
+}
+impl HasAttrs for Statement {
+  fn attrs(&self) -> &[Attribute] {
+    return self.kind.attrs();
+  }
+  fn walk_attrs<F>(&mut self, f: F)
+  where
+    F: FnOnce(&mut Vec<Attribute>), {
+    self.kind.walk_attrs(f);
+  }
+}
+
+macro_rules! impl_has_node_idx {
+  ($(
+    $ident:ident $(<$T:ident>)?,
+  )*) => {$(
+    impl HasNodeIdx for $ident $(<$T>)? {
+      fn node_idx(&self) -> NodeIdx {
+        return self.idx;
+      }
+      fn mut_node_idx(&mut self) -> &mut NodeIdx {
+        return &mut self.idx;
+      }
+    }
+  )*};
+}
+pub trait HasNodeIdx {
+  fn node_idx(&self) -> NodeIdx;
+  fn mut_node_idx(&mut self) -> &mut NodeIdx;
+}
+impl_has_node_idx! {
+  Sandyq,
+  Item,
+  Item<ForeignItemKind>,
+  Item<AssociatedItemKind>,
+  Expression,
 }
