@@ -2,6 +2,7 @@ use std::sync::OnceLock;
 
 use tilc_ast::Sandyq;
 use tilc_data_structure::Holder;
+use tilc_expand::ExpansiontCtxt;
 use tilc_middle::{Arena, QueryCaches, QuerySystem, QuerySystemFns, TyCtxt};
 use tilc_parse::new_parser_from_file;
 use tilc_resolver::Resolver;
@@ -15,11 +16,17 @@ pub(crate) fn resolver_for_lowering<'ctxt>(
   tcx: TyCtxt<'ctxt>,
   _: (),
 ) -> &'ctxt Holder<Sandyq> {
-  let sandyq = tcx.crate_for_resolving(()).steal();
-  let resolver = Resolver::new(tcx);
+  let mut sandyq = tcx.crate_for_resolving(()).steal();
+  let mut resolver = Resolver::new(tcx);
   dbg!(&resolver);
 
-  todo!();
+  let mut expansion_ctxt = ExpansiontCtxt::new(tcx.session, &mut resolver);
+  sandyq = expansion_ctxt
+    .monotonic_expander(true)
+    .expand_sandyq(sandyq);
+  dbg!(&sandyq);
+
+  return tcx.arena.alloc(Holder::new(sandyq));
 }
 
 pub(crate) fn parse(session: &Session) -> Result<Sandyq> {

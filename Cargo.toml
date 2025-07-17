@@ -40,6 +40,7 @@ tilc_arena = { path = "compiler/tilc_arena" }
 tilc_ast = { path = "compiler/tilc_ast" }
 tilc_data_structure = { path = "compiler/tilc_data_structure" }
 tilc_error = { path = "compiler/tilc_error" }
+tilc_expand = { path = "compiler/tilc_expand" }
 tilc_hir = { path = "compiler/tilc_hir" }
 tilc_interface = { path = "compiler/tilc_interface" }
 tilc_lexer = { path = "compiler/tilc_lexer" }

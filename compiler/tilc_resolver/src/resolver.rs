@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use tilc_ast::{NodeIdx, SANDYQ_NODE_IDX};
+use tilc_expand::ResolverExpander;
 use tilc_hir::DefKind;
 use tilc_middle::{Feed, TyCtxt};
 use tilc_span::LocalDefIdx;
@@ -41,5 +42,10 @@ impl<'ctxt> Resolver<'ctxt> {
     self.next_node_idx = NodeIdx::from_u32(next);
 
     return id;
+  }
+}
+impl<'ctxt> ResolverExpander for Resolver<'ctxt> {
+  fn next_node_idx(&mut self) -> NodeIdx {
+    return self.next_node_idx();
   }
 }
