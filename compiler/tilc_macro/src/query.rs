@@ -144,6 +144,7 @@ pub(crate) fn tilc_queries(input: TokenStream) -> TokenStream {
   let queries = parse_macro_input!(input as List<Query>);
 
   let mut query_stream = quote! {};
+  let mut descs_queries = quote! {};
   let mut feedable_queries = quote! {};
 
   for query in queries.0 {
@@ -179,6 +180,21 @@ pub(crate) fn tilc_queries(input: TokenStream) -> TokenStream {
         [#(#attributes),*] fn #name(#arg) #result,
       });
     };
+
+
+    let (tcx, desc) = modifiers.desc;
+    let tcx = tcx.map_or_else(
+      || {
+        quote! { _ }
+      },
+      |tcx| quote! { #tcx },
+    );
+    descs_queries.extend(quote! {
+      pub fn #name<'ctxt>(tcx: TyCtxt<'ctxt>, key: crate::query::queries::#name::Key<'ctxt>) -> String {
+        let (#tcx, #key) = (tcx, key);
+        return format!(#desc);
+      }
+    });
   }
 
 
@@ -198,6 +214,11 @@ pub(crate) fn tilc_queries(input: TokenStream) -> TokenStream {
           #feedable_queries
         }
       };
+    }
+
+    pub mod descs {
+      pub use super::*;
+      #descs_queries
     }
   });
 }

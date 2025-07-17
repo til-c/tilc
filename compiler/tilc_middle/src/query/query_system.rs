@@ -118,7 +118,9 @@ macro_rules! define_callbacks {
     )*}
     impl<'ctxt> TyCtxtAt<'ctxt> {$(
       pub fn $name(self, key: query_helper_param_ty!($($k)*)) -> $v {
-        return query_get(self.tcx, self.query_system.fns.local_providers.$name, &self.query_system.caches.$name, key.into_query_param());
+        let key = key.into_query_param();
+        dbg!(self::descs::$name(self.tcx, key));
+        return query_get(self.tcx, self.query_system.fns.local_providers.$name, &self.query_system.caches.$name, key);
       }
     )*}
 
