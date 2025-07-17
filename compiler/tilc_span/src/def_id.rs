@@ -11,13 +11,28 @@ uidx! {
   pub struct DefIdx {}
 }
 uidx! {
-  #[derive(Debug)]
+  #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
   pub struct SandyqIdx {}
 }
+pub const LOCAL_SANDYQ: SandyqIdx = SandyqIdx::EMPTY;
+
+
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub struct LocalDefIdx {
   local: DefIdx,
 }
+impl LocalDefIdx {
+  pub fn to_def_id(self) -> DefId {
+    return DefId {
+      def_idx: self.local,
+      sandyq_idx: LOCAL_SANDYQ,
+    };
+  }
+}
+
+pub const SANDYQ_DEF_IDX: LocalDefIdx = LocalDefIdx {
+  local: DefIdx::EMPTY,
+};
 
 #[derive(Debug, Hash)]
 pub struct SandyqId(Hash64);
@@ -33,8 +48,8 @@ impl SandyqId {
   }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
 pub struct DefId {
-  local_def_idx: LocalDefIdx,
-  sandyq_idx: SandyqIdx,
+  pub def_idx: DefIdx,
+  pub sandyq_idx: SandyqIdx,
 }

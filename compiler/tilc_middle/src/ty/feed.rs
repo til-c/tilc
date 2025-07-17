@@ -1,5 +1,7 @@
 use std::marker::PhantomData;
 
+use tilc_span::{LocalDefIdx, SANDYQ_DEF_IDX};
+
 use crate::TyCtxt;
 
 
@@ -43,5 +45,12 @@ impl<'ctxt, KEY: Copy> Feed<'ctxt, KEY> {
 impl<'ctxt> TyCtxt<'ctxt> {
   pub fn unit_query_feed(self) -> TyCtxtFeed<'ctxt, ()> {
     return TyCtxtFeed { tcx: self, key: () };
+  }
+
+  pub fn local_sandyq_def_id_feed(self) -> TyCtxtFeed<'ctxt, LocalDefIdx> {
+    return TyCtxtFeed {
+      tcx: self,
+      key: SANDYQ_DEF_IDX,
+    };
   }
 }

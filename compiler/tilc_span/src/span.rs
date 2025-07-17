@@ -10,7 +10,7 @@ uidx! {
   }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Default, Clone, Copy, PartialEq)]
 pub struct Span {
   lo_or_index: u32,
   len: u16,

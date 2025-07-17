@@ -1,4 +1,8 @@
-use std::{fmt::Debug, hash::Hash, sync::OnceLock};
+use std::{collections::HashMap, fmt::Debug, hash::Hash, sync::OnceLock};
+
+use indexmap::IndexMap;
+use parking_lot::RwLock;
+use tilc_span::{DefId, DefIdx, LOCAL_SANDYQ};
 
 
 pub fn try_get_cache<Cache>(
@@ -25,7 +29,10 @@ pub trait QueryCache: Sized {
 
 #[derive(Debug)]
 pub struct UnitCache<V>(OnceLock<V>);
-impl<V: Copy> QueryCache for UnitCache<V> {
+impl<V> QueryCache for UnitCache<V>
+where
+  V: Copy,
+{
   type Key = ();
   type Value = V;
 
@@ -42,5 +49,71 @@ impl<V: Copy> QueryCache for UnitCache<V> {
 impl<V> Default for UnitCache<V> {
   fn default() -> Self {
     return Self(OnceLock::default());
+  }
+}
+
+
+#[derive(Debug)]
+pub struct DefaultCache<K, V> {
+  map: RwLock<HashMap<K, V>>,
+}
+impl<K, V> Default for DefaultCache<K, V> {
+  fn default() -> Self {
+    return Self {
+      map: RwLock::new(HashMap::default()),
+    };
+  }
+}
+impl<K, V> QueryCache for DefaultCache<K, V>
+where
+  K: Debug + Copy + Hash + Eq,
+  V: Copy,
+{
+  type Key = K;
+  type Value = V;
+
+
+  fn lookup(&self, key: &Self::Key) -> Option<Self::Value> {
+    return self.map.read().get(key).copied();
+  }
+  fn compute(&self, key: Self::Key, value: Self::Value) {
+    self.map.write().insert(key, value);
+  }
+}
+
+#[derive(Debug)]
+pub struct DefIdCache<V> {
+  local: RwLock<IndexMap<DefIdx, V>>,
+  foreign: DefaultCache<DefId, V>,
+}
+impl<V> Default for DefIdCache<V> {
+  fn default() -> Self {
+    return Self {
+      local: RwLock::new(IndexMap::new()),
+      foreign: DefaultCache::default(),
+    };
+  }
+}
+impl<V> QueryCache for DefIdCache<V>
+where
+  V: Copy,
+{
+  type Key = DefId;
+  type Value = V;
+
+
+  fn lookup(&self, key: &Self::Key) -> Option<Self::Value> {
+    if key.sandyq_idx == LOCAL_SANDYQ {
+      return self.local.read().get(&key.def_idx).copied();
+    } else {
+      return self.foreign.lookup(key);
+    };
+  }
+  fn compute(&self, key: Self::Key, value: Self::Value) {
+    if key.sandyq_idx == LOCAL_SANDYQ {
+      self.local.write().insert(key.def_idx, value);
+    } else {
+      self.foreign.compute(key, value);
+    };
   }
 }

@@ -1,4 +1,5 @@
-use tilc_query_system::UnitCache;
+use tilc_query_system::{DefIdCache, UnitCache};
+use tilc_span::DefId;
 
 
 pub trait Key: Sized {
@@ -7,4 +8,7 @@ pub trait Key: Sized {
 
 impl Key for () {
   type Cache<V> = UnitCache<V>;
+}
+impl Key for DefId {
+  type Cache<V> = DefIdCache<V>;
 }

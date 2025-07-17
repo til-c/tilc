@@ -1,7 +1,7 @@
 use std::ops::Deref;
 
 use tilc_query_system::{QueryCache, try_get_cache};
-use tilc_span::Span;
+use tilc_span::{DefId, LocalDefIdx, Span};
 
 use crate::{QueryCaches, TyCtxt, query::Providers};
 
@@ -56,6 +56,11 @@ impl<P> IntoQueryParam<P> for P {
   #[inline(always)]
   fn into_query_param(self) -> P {
     return self;
+  }
+}
+impl IntoQueryParam<DefId> for LocalDefIdx {
+  fn into_query_param(self) -> DefId {
+    return self.to_def_id();
   }
 }
 

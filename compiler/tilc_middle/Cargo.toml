@@ -8,6 +8,7 @@ edition = "2024"
 tilc_arena = { workspace = true }
 tilc_ast = { workspace = true }
 tilc_data_structure = { workspace = true }
+tilc_hir = { workspace = true }
 tilc_macro = { workspace = true }
 tilc_query_system = { workspace = true }
 tilc_session = { workspace = true }

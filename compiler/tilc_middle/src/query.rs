@@ -8,8 +8,10 @@ pub use query_system::*;
 
 use tilc_ast::Sandyq;
 use tilc_data_structure::Holder;
+use tilc_hir::DefKind;
 use tilc_macro::tilc_queries;
 use tilc_query_system::{QueryCache, try_get_cache};
+use tilc_span::DefId;
 
 
 tilc_queries! {
@@ -18,8 +20,13 @@ tilc_queries! {
   }
 
   query crate_for_resolving((): ()) -> &'ctxt Holder<Sandyq> {
-    feedable
     desc { "Sandyq before macro and name resolution" }
+    feedable
+  }
+
+  query def_kind(def_id: DefId) -> DefKind {
+    desc { "Sandyq's span mapped by def idx" }
+    feedable
   }
 }
 all_queries! { define_callbacks! }
