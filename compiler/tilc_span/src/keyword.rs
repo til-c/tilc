@@ -37,6 +37,7 @@ symbols! {
     Main: "basty",
 
     dummy: "<dummy>",
+    root_crate: "basty_sandyq",
 
     tilc_out: "tilc_out",
   }

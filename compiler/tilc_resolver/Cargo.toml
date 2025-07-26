@@ -5,8 +5,13 @@ edition = "2024"
 
 [dependencies]
 # Internal crates
+tilc_arena = { workspace = true }
 tilc_ast = { workspace = true }
+tilc_data_structure = { workspace = true }
 tilc_expand = { workspace = true }
 tilc_hir = { workspace = true }
 tilc_middle = { workspace = true }
 tilc_span = { workspace = true }
+
+# External packages
+indexmap = { workspace = true }

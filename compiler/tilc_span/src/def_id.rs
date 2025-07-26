@@ -53,3 +53,8 @@ pub struct DefId {
   pub def_idx: DefIdx,
   pub sandyq_idx: SandyqIdx,
 }
+impl DefId {
+  pub fn is_local(&self) -> bool {
+    return self.sandyq_idx == LOCAL_SANDYQ;
+  }
+}
