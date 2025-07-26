@@ -503,6 +503,15 @@ impl WalkItemKind for ItemKind {
       _ => todo!(),
     };
   }
+  fn walk<W: crate::Walker>(
+    &self,
+    span: Span,
+    idx: NodeIdx,
+    vis: &Visibility,
+    walker: &mut W,
+  ) {
+    todo!();
+  }
 }
 
 macro_rules! impl_has_attrs {
