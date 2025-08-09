@@ -48,7 +48,7 @@ where
 }
 impl<V> Default for UnitCache<V> {
   fn default() -> Self {
-    return Self(OnceLock::default());
+    return Self(Default::default());
   }
 }
 
@@ -60,7 +60,7 @@ pub struct DefaultCache<K, V> {
 impl<K, V> Default for DefaultCache<K, V> {
   fn default() -> Self {
     return Self {
-      map: RwLock::new(HashMap::default()),
+      map: RwLock::new(Default::default()),
     };
   }
 }
@@ -90,7 +90,7 @@ impl<V> Default for DefIdCache<V> {
   fn default() -> Self {
     return Self {
       local: RwLock::new(IndexMap::new()),
-      foreign: DefaultCache::default(),
+      foreign: Default::default(),
     };
   }
 }

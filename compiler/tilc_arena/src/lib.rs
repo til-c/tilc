@@ -34,7 +34,7 @@ impl<T> TypedArena<T> {
       ptr: Cell::new(ptr::null_mut()),
       end: Cell::new(ptr::null_mut()),
 
-      chunks: RefCell::default(),
+      chunks: Default::default(),
     };
   }
 
@@ -104,7 +104,7 @@ impl DroplessArena {
       start: Cell::new(ptr::null_mut()),
       end: Cell::new(ptr::null_mut()),
 
-      chunks: RefCell::default(),
+      chunks: Default::default(),
     };
   }
 

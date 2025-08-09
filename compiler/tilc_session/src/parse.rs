@@ -18,8 +18,8 @@ pub struct ParseSession {
 impl ParseSession {
   pub fn new(source_map: Rc<SourceMap>) -> Self {
     return Self {
-      edition: Edition::default(),
-      symbol_repo: SymbolRepo::default(),
+      edition: Default::default(),
+      symbol_repo: Default::default(),
 
       source_map,
 
