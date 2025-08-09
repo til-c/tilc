@@ -3,21 +3,31 @@ use std::fmt::Debug;
 use tilc_span::{Ident, Span};
 
 use crate::{
-  Attribute, Block, Expression, ExpressionKind, Fn, Item, Local, LocalKind,
-  NodeIdx, Path, PathSegment, Pattern, PatternKind, Sandyq, Statement,
-  StatementKind, Visibility, VisibilityKind,
+  AttrArgs, Attribute, Block, Expression, ExpressionKind, Fn, Item, Local,
+  LocalKind, NodeIdx, Path, PathSegment, Pattern, PatternKind, Sandyq,
+  Statement, StatementKind, Visibility, VisibilityKind,
 };
 
 
 #[derive(Debug)]
-pub enum FnKind<'a> {
+pub enum FnKindMut<'a> {
   Fn(FnCtxt, &'a mut Visibility, &'a mut Fn),
   Closure,
 }
 #[derive(Debug)]
+pub enum FnKind<'a> {
+  Fn(FnCtxt, &'a Visibility, &'a Fn),
+  Closure,
+}
+#[derive(Debug)]
 pub enum FnCtxt {
+  // plain fx
   Free,
+
+  // fx from extern item
   Foreign,
+
+  // fx from trait or impl item
   Assoc(AssocCtxt),
 }
 #[derive(Debug)]
@@ -66,7 +76,7 @@ pub trait Walker: Sized {
     mut_walk_local(self, local);
   }
 
-  fn mut_walk_fn(&mut self, fn_kind: FnKind) {
+  fn mut_walk_fn(&mut self, fn_kind: FnKindMut) {
     mut_walk_fn(self, fn_kind);
   }
   fn mut_walk_block(&mut self, block: &mut Block) {
@@ -116,8 +126,12 @@ pub trait Walker: Sized {
     walk_local(self, local);
   }
 
-  fn walk_fn<'ast>(&mut self, fn_kind: &'ast FnKind) {}
-  fn walk_block<'ast>(&mut self, block: &'ast Block) {}
+  fn walk_fn<'ast>(&mut self, fn_kind: &'ast FnKind) {
+    walk_fn(self, fn_kind);
+  }
+  fn walk_block<'ast>(&mut self, block: &'ast Block) {
+    walk_block(self, block);
+  }
 
   fn walk_vis<'ast>(&mut self, vis: &'ast Visibility) {}
   fn walk_ident<'ast>(&mut self, ident: &'ast Ident) {}
@@ -259,6 +273,10 @@ pub fn mut_walk_local<W: Walker>(walker: &mut W, local: &mut Local) {
     LocalKind::Init(expr) => {
       walker.mut_walk_expr(expr);
     }
+    LocalKind::InitElse(expr, block) => {
+      walker.mut_walk_expr(expr);
+      walker.mut_walk_block(block);
+    }
   };
 
   if let Some(ty) = ty {
@@ -266,10 +284,10 @@ pub fn mut_walk_local<W: Walker>(walker: &mut W, local: &mut Local) {
   };
   walker.mut_walk_span(span);
 }
-pub fn mut_walk_fn<W: Walker>(walker: &mut W, fn_kind: FnKind) {
+pub fn mut_walk_fn<W: Walker>(walker: &mut W, fn_kind: FnKindMut<'_>) {
   dbg!("Mut walker: ", &fn_kind);
   match fn_kind {
-    FnKind::Fn(
+    FnKindMut::Fn(
       _,
       _,
       Fn {
@@ -285,7 +303,7 @@ pub fn mut_walk_fn<W: Walker>(walker: &mut W, fn_kind: FnKind) {
       };
     }
 
-    FnKind::Closure => todo!(),
+    FnKindMut::Closure => todo!(),
   };
 }
 pub fn mut_walk_block<W: Walker>(walker: &mut W, block: &mut Block) {
@@ -349,6 +367,22 @@ pub fn walk_attrs<'ast, W: Walker>(
 }
 pub fn walk_attr<'ast, W: Walker>(walker: &mut W, attr: &'ast Attribute) {
   dbg!("Walker: ", &attr);
+  let Attribute {
+    idx: _,
+    path,
+    args,
+    style: _,
+    span,
+  } = attr;
+  walker.walk_path(path);
+  match args {
+    AttrArgs::Empty | AttrArgs::Delimited(_) => {}
+    AttrArgs::Eq { eq_span, expr } => {
+      walker.walk_expr(expr);
+      walker.walk_span(eq_span);
+    }
+  }
+  walker.walk_span(span);
 }
 
 pub fn walk_sandyq<'ast, W: Walker>(walker: &mut W, sandyq: &'ast Sandyq) {
@@ -383,7 +417,124 @@ pub fn walk_item<'ast, W: Walker, K: WalkItemKind>(
   kind.walk(*span, *idx, vis, walker);
   walker.walk_span(span);
 }
-pub fn walk_stmt<'ast, W: Walker>(walker: &mut W, stmt: &'ast Statement) {}
-pub fn walk_expr<'ast, W: Walker>(walker: &mut W, expr: &'ast Expression) {}
-pub fn walk_pat<'ast, W: Walker>(walker: &mut W, pat: &'ast Pattern) {}
-pub fn walk_local<'ast, W: Walker>(walker: &mut W, local: &'ast Local) {}
+pub fn walk_stmt<'ast, W: Walker>(walker: &mut W, stmt: &'ast Statement) {
+  dbg!("Walker: ", &stmt);
+  let Statement { idx, kind, span } = stmt;
+  walker.walk_idx(idx);
+  match kind {
+    StatementKind::Let(local) => walker.walk_local(local),
+    StatementKind::Item(item) => walker.walk_item(item),
+    StatementKind::Expression(expr) | StatementKind::Semi(expr) => {
+      walker.walk_expr(expr)
+    }
+  };
+  walker.walk_span(span);
+}
+pub fn walk_expr<'ast, W: Walker>(walker: &mut W, expr: &'ast Expression) {
+  dbg!("Walker: ", &expr);
+  let Expression {
+    idx,
+    attrs,
+    kind,
+    span,
+  } = expr;
+  walker.walk_idx(idx);
+  walk_attrs(walker, attrs);
+  match kind {
+    ExpressionKind::Let(pat, expr, span) => {
+      walker.walk_pat(pat);
+      walker.walk_expr(expr);
+      walker.walk_span(span);
+    }
+    ExpressionKind::Assign(lhs, eq_span, rhs) => {
+      walker.walk_expr(lhs);
+      walker.walk_expr(rhs);
+      walker.walk_span(eq_span);
+    }
+    ExpressionKind::Lit(_) => {}
+  }
+  walker.walk_span(span);
+}
+pub fn walk_pat<'ast, W: Walker>(walker: &mut W, pat: &'ast Pattern) {
+  dbg!("Walker: ", &pat);
+  let Pattern { idx, kind, span } = pat;
+  walker.walk_idx(idx);
+  match kind {
+    PatternKind::Ident(_, ident, sub_pat) => {
+      walker.walk_ident(ident);
+      if let Some(sub_pat) = sub_pat {
+        walker.walk_pat(sub_pat);
+      };
+    }
+    PatternKind::Expression(expr) => {
+      walker.walk_expr(expr);
+    }
+    _ => todo!(),
+  };
+  walker.walk_span(span);
+}
+pub fn walk_local<'ast, W: Walker>(walker: &mut W, local: &'ast Local) {
+  dbg!("Walker: ", &local);
+  let Local {
+    idx,
+    attrs,
+    pat,
+    kind,
+    ty,
+    span,
+  } = local;
+  walker.walk_idx(idx);
+  walk_attrs(walker, attrs);
+  walker.walk_pat(pat);
+  if let Some(ty) = ty {
+    todo!();
+  };
+
+  match kind {
+    LocalKind::Decl => {}
+    LocalKind::Init(expr) => {
+      walker.walk_expr(expr);
+    }
+    LocalKind::InitElse(expr, block) => {
+      walker.walk_expr(expr);
+      walker.walk_block(block);
+    }
+  };
+  walker.walk_span(span);
+}
+
+pub fn walk_fn<'ast, W: Walker>(walker: &mut W, fn_kind: &'ast FnKind) {
+  dbg!("Walker: ", &fn_kind);
+  match fn_kind {
+    FnKind::Fn(
+      _,
+      _,
+      Fn {
+        generics,
+        ident,
+        fn_sig,
+        block,
+      },
+    ) => {
+      walker.walk_ident(ident);
+      if let Some(block) = block {
+        walker.walk_block(block);
+      };
+    }
+
+    FnKind::Closure => todo!(),
+  };
+}
+pub fn walk_block<'ast, W: Walker>(walker: &mut W, block: &'ast Block) {
+  dbg!("Walker: ", &block);
+  let Block {
+    idx,
+    statements,
+    span,
+  } = block;
+  walker.walk_idx(idx);
+  for stmt in statements {
+    walker.walk_stmt(stmt);
+  }
+  walker.walk_span(span);
+}

@@ -3,7 +3,9 @@ use std::sync::atomic::{AtomicU32, Ordering};
 use tilc_macro::uidx;
 use tilc_span::{Ident, Span, Symbol};
 
-use crate::{Delim, DelimSpan, FnCtxt, FnKind, Lit, TokenStream, WalkItemKind};
+use crate::{
+  Delim, DelimSpan, FnCtxt, FnKind, FnKindMut, Lit, TokenStream, WalkItemKind,
+};
 
 
 uidx! {
@@ -397,6 +399,7 @@ pub struct Local {
 pub enum LocalKind {
   Decl,
   Init(Box<Expression>),
+  InitElse(Box<Expression>, Box<Block>),
 }
 #[derive(Debug, Clone)]
 pub struct Pattern {
@@ -497,7 +500,7 @@ impl WalkItemKind for ItemKind {
   ) {
     match self {
       Self::Fn(fx) => {
-        let fn_kind = FnKind::Fn(FnCtxt::Free, vis, fx);
+        let fn_kind = FnKindMut::Fn(FnCtxt::Free, vis, fx);
         walker.mut_walk_fn(fn_kind);
       }
       _ => todo!(),
@@ -510,7 +513,14 @@ impl WalkItemKind for ItemKind {
     vis: &Visibility,
     walker: &mut W,
   ) {
-    todo!();
+    match self {
+      Self::Fn(fx) => {
+        let fn_kind = FnKind::Fn(FnCtxt::Free, vis, fx);
+        walker.walk_fn(&fn_kind);
+      }
+
+      _ => todo!(),
+    };
   }
 }
 
