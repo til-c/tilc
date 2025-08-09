@@ -55,6 +55,7 @@ tilc_span = { path = "compiler/tilc_span" }
 
 # External packages
 indexmap = { version = "2.10.0" }
+indexvec = { version = "0.5.4" }
 parking_lot = { version = "0.12.4" }
 proc-macro2 = { version = "1.0.95" }
 quote = { version = "1.0.40" }

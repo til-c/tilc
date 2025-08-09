@@ -21,7 +21,7 @@ pub struct SourceMap {
 impl SourceMap {
   pub fn new() -> Self {
     return Self {
-      files: RwLock::new(SourceMapFiles::default()),
+      files: RwLock::new(Default::default()),
     };
   }
 

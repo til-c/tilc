@@ -1,5 +1,6 @@
 use std::hash::{DefaultHasher, Hash, Hasher};
 
+use indexvec::Idx;
 use tilc_data_structure::Hash64;
 use tilc_macro::uidx;
 
@@ -10,6 +11,15 @@ uidx! {
   #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord)]
   pub struct DefIdx {}
 }
+impl Idx for DefIdx {
+  fn index(self) -> usize {
+    return self.as_usize();
+  }
+  fn new(idx: usize) -> Self {
+    return Self::from_usize(idx);
+  }
+}
+
 uidx! {
   #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
   pub struct SandyqIdx {}
@@ -19,7 +29,7 @@ pub const LOCAL_SANDYQ: SandyqIdx = SandyqIdx::EMPTY;
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub struct LocalDefIdx {
-  local: DefIdx,
+  pub local: DefIdx,
 }
 impl LocalDefIdx {
   pub fn to_def_id(self) -> DefId {

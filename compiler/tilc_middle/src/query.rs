@@ -19,13 +19,13 @@ tilc_queries! {
     desc { "returns resolver and sandyq" }
   }
 
-  query crate_for_resolving((): ()) -> &'ctxt Holder<Sandyq> {
-    desc { "Sandyq before macro and name resolution" }
+  query sandyq_for_resolving((): ()) -> &'ctxt Holder<Sandyq> {
+    desc { "sandyq before macro and name resolution" }
     feedable
   }
 
   query def_kind(def_id: DefId) -> DefKind {
-    desc { "Sandyq's span mapped by def idx" }
+    desc { "sandyq's definition kinds mapped by def idx" }
     feedable
   }
 }

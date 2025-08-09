@@ -1,5 +1,6 @@
 use std::marker::PhantomData;
 
+use tilc_hir::DefKind;
 use tilc_span::{LocalDefIdx, SANDYQ_DEF_IDX};
 
 use crate::TyCtxt;
@@ -52,5 +53,15 @@ impl<'ctxt> TyCtxt<'ctxt> {
       tcx: self,
       key: SANDYQ_DEF_IDX,
     };
+  }
+
+  pub fn create_def(self, def_kind: DefKind) -> TyCtxtFeed<'ctxt, LocalDefIdx> {
+    let def_idx = self.definitions.write().push(def_kind);
+    let key = LocalDefIdx { local: def_idx };
+
+    let feed = TyCtxtFeed { tcx: self, key };
+    dbg!(&self, &feed, def_idx, key, def_kind);
+    feed.def_kind(def_kind);
+    return feed;
   }
 }

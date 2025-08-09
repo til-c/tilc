@@ -1,7 +1,11 @@
 use std::{ops::Deref, sync::OnceLock};
 
+use indexvec::IndexVec;
+use parking_lot::RwLock;
+
+use tilc_hir::DefKind;
 use tilc_session::Session;
-use tilc_span::SandyqId;
+use tilc_span::{DefIdx, SandyqId};
 
 use crate::{Arena, QuerySystem};
 
@@ -15,6 +19,8 @@ pub struct GlobalCtxt<'ctxt> {
   pub query_system: QuerySystem<'ctxt>,
 
   sandyq_id: SandyqId,
+
+  pub definitions: RwLock<IndexVec<DefIdx, DefKind>>,
 }
 impl<'ctxt> GlobalCtxt<'ctxt> {
   fn enter<R, F: FnOnce(TyCtxt<'ctxt>) -> R>(&'ctxt self, f: F) -> R {
@@ -36,6 +42,9 @@ impl<'ctxt> TyCtxt<'ctxt> {
     sandyq_id: SandyqId,
     f: F,
   ) -> T {
+    let definitions: RwLock<IndexVec<DefIdx, DefKind>> = Default::default();
+    definitions.write().push(DefKind::Korpe);
+
     return gcx_cell
       .get_or_init(|| GlobalCtxt {
         session,
@@ -44,6 +53,8 @@ impl<'ctxt> TyCtxt<'ctxt> {
         query_system,
 
         sandyq_id,
+
+        definitions,
       })
       .enter(f);
   }

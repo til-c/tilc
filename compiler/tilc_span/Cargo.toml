@@ -10,4 +10,5 @@ tilc_macro = { workspace = true }
 
 # External packages
 indexmap = { workspace = true }
+indexvec = { workspace = true }
 parking_lot = { workspace = true }
