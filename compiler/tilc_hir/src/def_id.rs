@@ -17,6 +17,8 @@ pub enum DefKind {
 
   Struct,
   Enum,
-  Trait,
   Union,
+  Trait,
+
+  Fn,
 }

@@ -1,17 +1,18 @@
 use std::{cell::RefCell, collections::HashMap};
 
 use indexmap::IndexMap;
+
 use tilc_arena::TypedArena;
 use tilc_ast::{
   Attribute, Item, NodeIdx, SANDYQ_NODE_IDX, Sandyq, Walker, walk_sandyq,
 };
 use tilc_data_structure::Interned;
-use tilc_expand::ResolverExpander;
+use tilc_expand::{AstFragment, ResolverExpander};
 use tilc_hir::{DefKind, Res};
-use tilc_middle::{Feed, TyCtxt};
+use tilc_middle::{Feed, TyCtxt, TyCtxtFeed};
 use tilc_span::{Ident, LocalDefIdx, SANDYQ_DEF_IDX, Span, sym};
 
-use crate::{Korpe, KorpeData, KorpeKind};
+use crate::{DefCollector, Korpe, KorpeData, KorpeKind};
 
 
 #[derive(Debug, Default)]
@@ -63,7 +64,8 @@ impl<'ctxt, 'ra> Resolver<'ctxt, 'ra> {
       sandyq_span,
     );
 
-    let mut node_idx_to_def_idx = HashMap::default();
+    let mut node_idx_to_def_idx: HashMap<NodeIdx, Feed<'ctxt, LocalDefIdx>> =
+      Default::default();
 
     let sandyq_feed = tcx.local_sandyq_def_id_feed();
     sandyq_feed.def_kind(DefKind::Korpe);
@@ -88,12 +90,27 @@ impl<'ctxt, 'ra> Resolver<'ctxt, 'ra> {
   pub fn tcx(&self) -> TyCtxt<'ctxt> {
     return self.tcx;
   }
-  pub fn next_node_idx(&mut self) -> NodeIdx {
+  pub(crate) fn next_node_idx(&mut self) -> NodeIdx {
     let id = self.next_node_idx;
     let next = id.as_u32().checked_add(1).expect("Too many NodeIds");
     self.next_node_idx = NodeIdx::from_u32(next);
 
     return id;
+  }
+
+  // TODO: Parent and macro expansion specific definition
+  pub(crate) fn create_def(
+    &mut self,
+    node_idx: NodeIdx,
+    def_kind: DefKind,
+  ) -> TyCtxtFeed<'ctxt, LocalDefIdx> {
+    let feed = self.tcx.create_def(def_kind);
+    if node_idx != NodeIdx::DUMMY {
+      self.node_idx_to_def_idx.insert(node_idx, feed.downgrade());
+    };
+
+
+    return feed;
   }
 
   pub fn resolve_sandyq(&mut self, sandyq: &Sandyq) {
@@ -104,6 +121,12 @@ impl<'ctxt, 'ra> Resolver<'ctxt, 'ra> {
 impl<'ctxt, 'ra> ResolverExpander for Resolver<'ctxt, 'ra> {
   fn next_node_idx(&mut self) -> NodeIdx {
     return self.next_node_idx();
+  }
+
+  fn def_colletor<'a>(&mut self, ast_fragment: &'a AstFragment) {
+    let mut def_collector = DefCollector { resolver: self };
+
+    ast_fragment.walk_ast(&mut def_collector);
   }
 }
 
@@ -126,7 +149,10 @@ impl<'a, 'ctxt, 'ra> ResolveNamespace<'a, 'ctxt, 'ra> {
   }
 
 
-  fn resolve_item<'ast>(&mut self, item: &'ast Item) {}
+  fn resolve_item<'ast>(&mut self, item: &'ast Item) {
+    let def_kind = self.resolver.node_idx_to_def_idx.get(&item.idx).unwrap();
+    dbg!(&def_kind);
+  }
 }
 impl<'a, 'ctxt, 'ra> Walker for ResolveNamespace<'a, 'ctxt, 'ra> {
   fn walk_attr<'ast>(&mut self, attr: &'ast Attribute) {}

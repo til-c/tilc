@@ -12,10 +12,11 @@ macro_rules! ast_fragment {
   ($(
     $kind:ident($ast_ty:ty) {
       $kind_name:expr;
-      $(walker fn $mut_walk_ast:ident;)?
+      $(walker fn $mut_walk_ast:ident; fn $walk_ast:ident;)?
       fn $make_ast:ident;
     }
   )*) => {
+    #[derive(Clone)]
     pub enum AstFragment {$(
       $kind($ast_ty),
     )*}
@@ -25,8 +26,13 @@ macro_rules! ast_fragment {
           $($(Self::$kind(ast) => walker.$mut_walk_ast(ast),)?)*
         };
       }
+      pub fn walk_ast<'a, W: Walker>(&'a self, walker: &mut W) {
+        match self {
+          $($(Self::$kind(ast) => walker.$walk_ast(ast),)?)*
+        }
+      }
 
-      $(fn $make_ast(self) -> $ast_ty {
+      $(pub fn $make_ast(self) -> $ast_ty {
         match self {
           Self::$kind(ast) => return ast,
           _ => panic!("make_ast called on wrong AstFragment"),
@@ -43,17 +49,17 @@ macro_rules! ast_fragment {
 ast_fragment! {
   Sandyq(Sandyq) {
     "sandyq";
-    walker fn mut_walk_sandyq;
+    walker fn mut_walk_sandyq; fn walk_sandyq;
     fn make_sandyq;
   }
   Item(Box<Item>) {
     "item";
-    walker fn mut_walk_item;
+    walker fn mut_walk_item; fn walk_item;
     fn make_items;
   }
   Statement(Box<Statement>) {
     "statement";
-    walker fn mut_walk_stmt;
+    walker fn mut_walk_stmt; fn walk_stmt;
     fn make_statement;
   }
 }
@@ -97,6 +103,12 @@ impl<'a, 'b> MacroExpander<'a, 'b> {
     };
 
     fragment.mut_walk_ast(&mut collector);
+
+
+    if self.is_monotonic {
+      self.ecx.resolver.def_colletor(&fragment);
+    };
+
     return fragment.make_sandyq();
   }
 }
