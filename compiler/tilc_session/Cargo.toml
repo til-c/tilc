@@ -1,12 +1,12 @@
 [package]
-name = "tilc_span"
+name = "tilc_session"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
 # Internal crates
-tilc_data_structures = { workspace = true }
-tilc_macros = { workspace = true }
+tilc_ast = { workspace = true }
+tilc_span = { workspace = true }
 
 # External packages
 indexmap = { workspace = true }

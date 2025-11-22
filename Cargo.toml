@@ -4,30 +4,45 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+tilc_interface = { workspace = true }
 
 
 [workspace]
 members = [
+  "compiler/tilc_advanced_lexer",
+  "compiler/tilc_ast",
+  "compiler/tilc_data_structures",
+  "compiler/tilc_error",
+  "compiler/tilc_interface",
+  "compiler/tilc_lexer",
   "compiler/tilc_macros",
   "compiler/tilc_macros_tests",
+  "compiler/tilc_parse",
+  "compiler/tilc_parser",
+  "compiler/tilc_session",
   "compiler/tilc_span",
 ]
 resolver = "2"
 
 [workspace.dependencies]
 # Internal crates
+tilc_advanced_lexer = { path = "compiler/tilc_advanced_lexer" }
+tilc_ast = { path = "compiler/tilc_ast" }
+tilc_data_structures = { path = "compiler/tilc_data_structures" }
+tilc_error = { path = "compiler/tilc_error" }
+tilc_interface = { path = "compiler/tilc_interface" }
+tilc_lexer = { path = "compiler/tilc_lexer" }
 tilc_macros = { path = "compiler/tilc_macros" }
+tilc_parse = { path = "compiler/tilc_parse" }
+tilc_parser = { path = "compiler/tilc_parser" }
+tilc_session = { path = "compiler/tilc_session" }
 tilc_span = { path = "compiler/tilc_span" }
 
 # External packages
 indexmap = { version = "^2.12.1", default-features = false, features = ["std"] }
 parking_lot = { version = "^0.12.5", default-features = false }
-proc-macro2 = { version = "^1.0.94", default-features = false, features = [
-  "proc-macro",
-] }
-quote = { version = "^1.0.42", default-features = false, features = [
-  "proc-macro",
-] }
+proc-macro2 = { version = "^1.0.94", default-features = false }
+quote = { version = "^1.0.42", default-features = false }
 syn = { version = "^2.0.110", default-features = false, features = [
   "parsing",
   "proc-macro",

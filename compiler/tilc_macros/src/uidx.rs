@@ -62,7 +62,7 @@ impl Parse for Uidx {
     }
     let max = max.unwrap_or_else(|| Lit::Int(LitInt::new("0xFFFF_FF00", Span::call_site())));
 
-    return Ok(Self(TokenStream::from(quote! {
+    Ok(Self(TokenStream::from(quote! {
       #(#attrs)*
       #[derive(Debug)]
       #[derive(Clone, Copy)]
@@ -81,14 +81,14 @@ impl Parse for Uidx {
         #vis const fn from_u16(v: u16) -> Self {
           assert!(v as u32 <= #max);
           unsafe {
-            return Self::from_u32_unchecked(v as u32);
+             return Self::from_u32_unchecked(v as u32);
           };
         }
         #[inline]
         #vis const fn from_u32(v: u32) -> Self {
           assert!(v <= #max);
           unsafe {
-            return Self::from_u32_unchecked(v);
+             return Self::from_u32_unchecked(v);
           };
         }
         #[inline]
@@ -103,20 +103,20 @@ impl Parse for Uidx {
         #[inline]
         #vis const fn as_u16(self) -> u16 {
           assert!(self.0 <= u16::MAX as u32);
-          return self.0 as u16;
+           self.0 as u16
         }
         #[inline]
         #vis const fn as_u32(self) -> u32 {
-          return self.0;
+           self.0
         }
         #[inline]
         #vis const fn as_usize(self) -> usize {
-          return self.0 as usize;
+           self.0 as usize
         }
 
         #[inline]
         const unsafe fn from_u32_unchecked(v: u32) -> Self {
-          return Self(v);
+           Self(v)
         }
       }
 
@@ -124,47 +124,47 @@ impl Parse for Uidx {
         type Output = Self;
 
         fn add(self, rhs: usize) -> Self::Output {
-          return Self::from_usize(self.as_usize() + rhs);
+           Self::from_usize(self.as_usize() + rhs)
         }
       }
       impl ::std::ops::Sub<usize> for #name {
         type Output = Self;
 
         fn sub(self, rhs: usize) -> Self {
-          return Self::from_usize(self.as_usize() - rhs);
+          Self::from_usize(self.as_usize() - rhs)
         }
       }
 
       impl ::core::convert::From<#name> for u32 {
         #[inline]
         fn from(v: #name) -> u32 {
-         return v.as_u32();
+         v.as_u32()
         }
       }
       impl ::core::convert::From<#name> for usize {
         #[inline]
         fn from(v: #name) -> usize {
-          return v.as_usize();
+          v.as_usize()
         }
       }
 
       impl ::core::convert::From<usize> for #name {
         #[inline]
         fn from(v: usize) -> Self {
-         return Self::from_usize(v);
+         Self::from_usize(v)
         }
       }
       impl ::core::convert::From<u32> for #name {
         #[inline]
         fn from(v: u32) -> Self {
-         return Self::from_u32(v);
+         Self::from_u32(v)
         }
       }
-    })));
+    })))
   }
 }
 
 pub(super) fn uidx(input: TokenStream) -> TokenStream {
   let uidx = parse_macro_input!(input as Uidx);
-  return uidx.0;
+  uidx.0
 }

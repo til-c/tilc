@@ -46,11 +46,17 @@ symbols! {
     // Gen: "",
 
     // meta programming
-    // Macro: ""
+    // Macro: "",
 
+    // other
+    Underscore: "_",
+    As: "sekildi",
+    Mut: "ayspaly",
   }
 
   Symbols {
     Main: "basty",
+
+    dummy: "<dummy>"
   }
 }

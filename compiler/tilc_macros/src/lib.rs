@@ -5,9 +5,9 @@ mod uidx;
 
 #[proc_macro]
 pub fn uidx(input: TokenStream) -> TokenStream {
-  return uidx::uidx(input);
+  uidx::uidx(input)
 }
 #[proc_macro]
 pub fn symbols(input: TokenStream) -> TokenStream {
-  return symbols::symbols(input);
+  symbols::symbols(input)
 }

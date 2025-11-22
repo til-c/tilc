@@ -1,0 +1,11 @@
+[package]
+name = "tilc_parser"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# Internal crates
+tilc_ast = { workspace = true }
+tilc_error = { workspace = true }
+tilc_session = { workspace = true }
+tilc_span = { workspace = true }

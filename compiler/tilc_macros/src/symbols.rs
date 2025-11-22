@@ -24,7 +24,7 @@ impl Parse for Keyword {
     let name = input.parse()?;
     input.parse::<Token![:]>()?;
     let value = input.parse()?;
-    return Ok(Self { name, value });
+    Ok(Self { name, value })
   }
 }
 struct Symbol {
@@ -36,7 +36,7 @@ impl Parse for Symbol {
     let name = input.parse()?;
     input.parse::<Token![:]>()?;
     let value = input.parse()?;
-    return Ok(Self { name, value });
+    Ok(Self { name, value })
   }
 }
 
@@ -56,7 +56,7 @@ impl Parse for Input {
     braced!(content in input);
     let symbols = Punctuated::parse_terminated(&content)?;
 
-    return Ok(Self { keywords, symbols });
+    Ok(Self { keywords, symbols })
   }
 }
 
@@ -67,7 +67,7 @@ struct Interned {
 struct Entries(HashMap<String, Interned>);
 impl Entries {
   fn with_capacity(cap: usize) -> Self {
-    return Self(HashMap::with_capacity(cap));
+    Self(HashMap::with_capacity(cap))
   }
 
   fn insert(&mut self, key: &str, span: Span) -> u32 {
@@ -75,15 +75,15 @@ impl Entries {
       eprintln!("Entry {} already exists", key);
       eprintln!("Entry span: {:?}", prev.span);
 
-      return prev.idx;
+      prev.idx
     } else {
       let idx = self.len();
       self.0.insert(key.to_string(), Interned { idx, span });
-      return idx;
-    };
+      idx
+    }
   }
   fn len(&self) -> u32 {
-    return u32::try_from(self.0.len()).expect("too many entries");
+    u32::try_from(self.0.len()).expect("too many entries")
   }
 }
 
@@ -123,7 +123,7 @@ pub(super) fn symbols(input: TokenStream) -> TokenStream {
   }
 
   let pre_interned_len = entries.len();
-  return TokenStream::from(quote! {
+  TokenStream::from(quote! {
     pub const PRE_INTERNED_SYMBOLS_LEN: u32 = #pre_interned_len;
 
     #[allow(non_upper_case_globals)]
@@ -139,8 +139,8 @@ pub(super) fn symbols(input: TokenStream) -> TokenStream {
 
     impl crate::Interner {
       pub fn with_prefilled() -> Self {
-        return Self::prefill(&[#interner_prefill]);
+        Self::prefill(&[#interner_prefill])
       }
     }
-  });
+  })
 }

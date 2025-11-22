@@ -6,11 +6,11 @@ use crate::Symbol;
 pub struct Interner(RwLock<InnerInterner>);
 impl Interner {
   pub fn new() -> Self {
-    return Self(RwLock::new(InnerInterner(IndexSet::new())));
+    Self(RwLock::new(InnerInterner(IndexSet::new())))
   }
 
   pub(crate) fn prefill(init: &[&'static str]) -> Self {
-    return Self(RwLock::new(InnerInterner(init.iter().copied().collect())));
+    Self(RwLock::new(InnerInterner(init.iter().copied().collect())))
   }
 
   pub(crate) fn intern(&self, string: &str) -> Symbol {
@@ -23,7 +23,7 @@ impl Interner {
     let (idx, is_new) = inner.0.insert_full(string);
 
     debug_assert!(is_new);
-    return Symbol::new(idx as u32);
+    Symbol::new(idx as u32)
   }
 }
 struct InnerInterner(IndexSet<&'static str>);
