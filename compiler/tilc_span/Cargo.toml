@@ -1,0 +1,12 @@
+[package]
+name = "tilc_span"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# Internal crates
+tilc_macros = { workspace = true }
+
+# External packages
+indexmap = { workspace = true }
+parking_lot = { workspace = true }

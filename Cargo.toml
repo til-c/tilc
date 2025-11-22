@@ -7,11 +7,33 @@ edition = "2024"
 
 
 [workspace]
-members = []
+members = [
+  "compiler/tilc_macros",
+  "compiler/tilc_macros_tests",
+  "compiler/tilc_span",
+]
 resolver = "2"
 
 [workspace.dependencies]
+# Internal crates
+tilc_macros = { path = "compiler/tilc_macros" }
+tilc_span = { path = "compiler/tilc_span" }
+
 # External packages
-syn = { version = "^2.0.110", default-features = false }
-quote = { version = "^1.0.42", default-features = false }
-proc-macro2 = { version = "^1.0.103", default-features = false }
+indexmap = { version = "^2.12.1", default-features = false, features = ["std"] }
+parking_lot = { version = "^0.12.5", default-features = false }
+proc-macro2 = { version = "^1.0.94", default-features = false, features = [
+  "proc-macro",
+] }
+quote = { version = "^1.0.42", default-features = false, features = [
+  "proc-macro",
+] }
+syn = { version = "^2.0.110", default-features = false, features = [
+  "parsing",
+  "proc-macro",
+  "printing",
+  "derive",
+  "clone-impls",
+  "extra-traits",
+  "full",
+] }
