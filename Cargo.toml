@@ -1,0 +1,17 @@
+[package]
+name = "tilc"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+
+[workspace]
+members = []
+resolver = "2"
+
+[workspace.dependencies]
+# External packages
+syn = { version = "^2.0.110", default-features = false }
+quote = { version = "^1.0.42", default-features = false }
+proc-macro2 = { version = "^1.0.103", default-features = false }
