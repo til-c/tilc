@@ -173,11 +173,11 @@ impl<T> ArenaChunk<T> {
 
   #[inline(always)]
   pub const fn start(&mut self) -> *mut T {
-    return self.storage;
+    self.storage
   }
   #[inline]
   pub const fn end(&mut self) -> *mut T {
-    unsafe { self.storage.add(self.capacity) }
+    unsafe { return self.storage.add(self.capacity) };
   }
 }
 

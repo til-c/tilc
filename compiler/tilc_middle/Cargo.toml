@@ -1,5 +1,5 @@
 [package]
-name = "tilc_interface"
+name = "tilc_middle"
 version = "0.1.0"
 edition = "2024"
 
@@ -7,8 +7,9 @@ edition = "2024"
 # Internal crates
 tilc_ast = { workspace = true }
 tilc_data_structures = { workspace = true }
-tilc_error = { workspace = true }
-tilc_middle = { workspace = true }
-tilc_parse = { workspace = true }
+tilc_macros = { workspace = true }
 tilc_session = { workspace = true }
 tilc_span = { workspace = true }
+
+# External packages
+parking_lot = { workspace = true }
