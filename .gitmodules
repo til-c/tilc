@@ -1,0 +1,4 @@
+[submodule "external/llvm"]
+	path = external/llvm
+	url = https://github.com/til-c/tilc_llvm.git
+	branch = release/21.x
